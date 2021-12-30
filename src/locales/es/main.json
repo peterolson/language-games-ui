@@ -1,3 +1,43 @@
 {
-  "games": "Juegos"
+  "chat": {
+    "name": ""
+  },
+  "error": {
+    "noPermission": "No dio permiso para usar la cámara y el micrófono.",
+    "videoNotReadable": "No se puede leer la fuente de video. \nCompruebe si su cámara web ya está siendo utilizada por otra aplicación."
+  },
+  "free-chat": {
+    "name": "Chat"
+  },
+  "game": {
+    "connecting": "Conectando con otros jugadores ...",
+    "nameInput": "¿Cuál es tu nombre?",
+    "namePlaceholder": "Juan Garcia",
+    "userReady": "Estoy listo",
+    "waiting": "Esperando jugadores ..."
+  },
+  "games": "Juegos",
+  "guess-who": {
+    "name": "¿Quién es?"
+  },
+  "home": "Inicio",
+  "language": "Idioma",
+  "media": {
+    "camera": "Fuente de vídeo",
+    "hideVideo": "Ocultar video",
+    "microphone": "Micrófono",
+    "mute": "Silencio",
+    "showVideo": "Mostrar video",
+    "testAudio": "Prueba de audio",
+    "testAudioPlayingBack": "Reproducción ...",
+    "testAudioRecording": "Di algo",
+    "unmute": "Activar sonido"
+  },
+  "play": "Jugar",
+  "snake-oil": {
+    "name": "Vendedor"
+  },
+  "taboo": {
+    "name": "Explica la palabra"
+  }
 }

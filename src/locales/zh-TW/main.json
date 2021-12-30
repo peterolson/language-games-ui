@@ -1,3 +1,43 @@
 {
-  "games": "遊戲"
+  "chat": {
+    "name": ""
+  },
+  "error": {
+    "noPermission": "您沒有授予使用攝像頭和麥克風的權限。",
+    "videoNotReadable": "無法讀取視頻源。\n檢查您的網絡攝像頭是否已被其他應用程序使用。"
+  },
+  "free-chat": {
+    "name": "聊天"
+  },
+  "game": {
+    "connecting": "連接到其他玩家...",
+    "nameInput": "你叫什麼名字？",
+    "namePlaceholder": "陳大文",
+    "userReady": "我準備好了",
+    "waiting": "等待玩家..."
+  },
+  "games": "遊戲",
+  "guess-who": {
+    "name": "是誰？"
+  },
+  "home": "主頁",
+  "language": "語言",
+  "media": {
+    "camera": "視頻源",
+    "hideVideo": "隱藏視頻",
+    "microphone": "麥克風",
+    "mute": "靜音",
+    "showVideo": "顯示視頻",
+    "testAudio": "測試音頻",
+    "testAudioPlayingBack": "正在播放...",
+    "testAudioRecording": "說些什麼",
+    "unmute": "取消靜音"
+  },
+  "play": "玩",
+  "snake-oil": {
+    "name": "推銷員"
+  },
+  "taboo": {
+    "name": "解釋這個詞"
+  }
 }

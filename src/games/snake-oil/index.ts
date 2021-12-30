@@ -2,7 +2,7 @@ import type { Game } from '../games.types';
 import Summary from './summary.svelte';
 
 const game: Game = {
-	key: 'guess-who',
+	key: 'snake-oil',
 	supportedLocales: '*',
 	Summary
 };

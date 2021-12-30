@@ -1,3 +1,43 @@
 {
-  "games": "Jeux"
+  "chat": {
+    "name": ""
+  },
+  "error": {
+    "noPermission": "Vous n'avez pas autorisé l'utilisation de la caméra et du microphone.",
+    "videoNotReadable": "Impossible de lire la source vidéo. \nVérifiez si votre webcam est déjà utilisée par une autre application."
+  },
+  "free-chat": {
+    "name": "Discuter"
+  },
+  "game": {
+    "connecting": "Connexion à d'autres joueurs...",
+    "nameInput": "Quel est ton nom?",
+    "namePlaceholder": "Jean Dupont",
+    "userReady": "Je suis prêt",
+    "waiting": "En attendant les joueurs..."
+  },
+  "games": "Jeux",
+  "guess-who": {
+    "name": "Qu'est-ce?"
+  },
+  "home": "Accueil",
+  "language": "Langue",
+  "media": {
+    "camera": "Source vidéo",
+    "hideVideo": "Masquer la vidéo",
+    "microphone": "Microphone",
+    "mute": "Muet",
+    "showVideo": "Afficher la vidéo",
+    "testAudio": "Tester le son",
+    "testAudioPlayingBack": "Lecture...",
+    "testAudioRecording": "Dis quelquechose",
+    "unmute": "Rétablir le son"
+  },
+  "play": "Jouer",
+  "snake-oil": {
+    "name": "Vendeur"
+  },
+  "taboo": {
+    "name": "Expliquez le mot"
+  }
 }

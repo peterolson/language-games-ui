@@ -1,3 +1,43 @@
 {
-  "games": "游戏"
+  "chat": {
+    "name": ""
+  },
+  "error": {
+    "noPermission": "您没有授予使用摄像头和麦克风的权限。",
+    "videoNotReadable": "无法读取视频源。\n检查您的网络摄像头是否已被其他应用程序使用。"
+  },
+  "free-chat": {
+    "name": "聊天"
+  },
+  "game": {
+    "connecting": "连接到其他玩家...",
+    "nameInput": "你叫什么名字？",
+    "namePlaceholder": "王小明",
+    "userReady": "我准备好了",
+    "waiting": "等待玩家..."
+  },
+  "games": "游戏",
+  "guess-who": {
+    "name": "是谁？"
+  },
+  "home": "主页",
+  "language": "语言",
+  "media": {
+    "camera": "视频源",
+    "hideVideo": "隐藏视频",
+    "microphone": "麦克风",
+    "mute": "静音",
+    "showVideo": "显示视频",
+    "testAudio": "测试音频",
+    "testAudioPlayingBack": "正在播放...",
+    "testAudioRecording": "说些什么",
+    "unmute": "取消静音"
+  },
+  "play": "玩",
+  "snake-oil": {
+    "name": "推销员"
+  },
+  "taboo": {
+    "name": "解释这个词"
+  }
 }

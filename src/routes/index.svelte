@@ -8,18 +8,20 @@
 	});
 </script>
 
-{#each languages as { room, locale, name, en }}
-	<div>
-		<a
-			href={`/${room}${locale === room ? '' : `_${locale}`}`}
-			on:click={() => {
-				_locale.set(locale);
-			}}
-		>
-			{name}
-			{#if name !== en}
-				- {en}
-			{/if}
-		</a>
-	</div>
-{/each}
+<div class="container">
+	{#each languages as { room, locale, name, en }}
+		<div>
+			<a
+				href={`/${room}${locale === room ? '' : `_${locale}`}`}
+				on:click={() => {
+					_locale.set(locale);
+				}}
+			>
+				{name}
+				{#if name !== en}
+					- {en}
+				{/if}
+			</a>
+		</div>
+	{/each}
+</div>

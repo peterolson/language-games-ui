@@ -1,3 +1,43 @@
 {
-	"games": "Games"
+  "chat": {
+    "name": "Chat"
+  },
+  "error": {
+    "noPermission": "You did not give permission to use the camera and microphone.",
+    "videoNotReadable": "Cannot read video source. Check if your webcam is already in use by another application."
+  },
+  "free-chat": {
+    "name": ""
+  },
+  "game": {
+    "connecting": "Connecting to other players...",
+    "nameInput": "What's your name?",
+    "namePlaceholder": "John Smith",
+    "userReady": "I'm ready",
+    "waiting": "Waiting for players..."
+  },
+  "games": "Games",
+  "guess-who": {
+    "name": "Who is it?"
+  },
+  "home": "Home",
+  "language": "Language",
+  "media": {
+    "camera": "Video source",
+    "hideVideo": "Hide video",
+    "microphone": "Microphone",
+    "mute": "Mute",
+    "showVideo": "Show video",
+    "testAudio": "Test audio",
+    "testAudioPlayingBack": "Playing back...",
+    "testAudioRecording": "Say something",
+    "unmute": "Unmute"
+  },
+  "play": "Play",
+  "snake-oil": {
+    "name": "Salesman"
+  },
+  "taboo": {
+    "name": "Explain the word"
+  }
 }

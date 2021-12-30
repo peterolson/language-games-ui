@@ -1,32 +1,53 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { locale } from 'svelte-i18n';
-	import { languages } from '../../data/languages';
+	import { games } from '../../games';
+	import { languages, parseLang } from '../../data/languages';
 	import { _ } from '../../i18n';
+	import { Breadcrumb, BreadcrumbItem } from 'sveltestrap';
 
 	const { lang } = $page.params;
-	let [room, langCode] = lang.split('_');
-	if (!langCode) {
-		langCode = room;
-	}
-	const { name, rtl } = languages.find((l) => l.locale === langCode && l.room === room) || {};
+	const { room, langCode, language } = parseLang(lang);
+	const { name, rtl } = language;
 </script>
 
 <svelte:head>
-	<title>{name} - {$_('games')}</title>
+	<title>{language.name} - {$_('games')}</title>
 </svelte:head>
 
 <div class="container" class:rtl>
-	<h1>{name} - {$_('games')}</h1>
+	<nav>
+		<a href="/">{$_('home')}</a>&nbsp;/&nbsp;
+		{language.name}
+	</nav>
+	<div class="gameList">
+		<h1>{$_('games')}</h1>
+
+		{#each games as { Summary, key }}
+			<div class="game">
+				<strong>{$_(`${key}.name`)}</strong>
+				<Summary />
+				<a href={`/${lang}/play?games=${key}`}>{$_('play')}</a>
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
-	.container {
-		padding: 20px;
-		background: #fafafa;
-		border: 1px solid #eaeaea;
-		border-radius: 5px;
-		margin-bottom: 20px;
+	nav {
+		display: flex;
+		padding: 0 8px;
+	}
+
+	.gameList {
+		margin: auto;
+		width: 100%;
+		max-width: 640px;
+	}
+
+	.game {
+		border: 1px solid black;
+		padding: 8px;
+		margin: 8px;
 	}
 
 	.rtl {

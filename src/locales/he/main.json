@@ -1,3 +1,43 @@
 {
-  "games": "משחקים"
+  "chat": {
+    "name": ""
+  },
+  "error": {
+    "noPermission": "לא נתת הרשאה להשתמש במצלמה ובמיקרופון.",
+    "videoNotReadable": "לא ניתן לקרוא מקור וידאו. \nבדוק אם מצלמת האינטרנט שלך כבר בשימוש על ידי יישום אחר."
+  },
+  "free-chat": {
+    "name": "לְשׂוֹחֵחַ"
+  },
+  "game": {
+    "connecting": "מתחבר לשחקנים אחרים...",
+    "nameInput": "מה שמך?",
+    "namePlaceholder": "ישראל ישראלי",
+    "userReady": "אני מוכן",
+    "waiting": "מחכה לשחקנים..."
+  },
+  "games": "משחקים",
+  "guess-who": {
+    "name": "מי זה?"
+  },
+  "home": "דף הבית",
+  "language": "שפה",
+  "media": {
+    "camera": "מקור וידאו",
+    "hideVideo": "הסתר סרטון",
+    "microphone": "מִיקרוֹפוֹן",
+    "mute": "לְהַשְׁתִיק",
+    "showVideo": "הצג וידאו",
+    "testAudio": "בדיקת אודיו",
+    "testAudioPlayingBack": "מנגן...",
+    "testAudioRecording": "תגיד משהו",
+    "unmute": "בטל השתקה"
+  },
+  "play": "לְשַׂחֵק",
+  "snake-oil": {
+    "name": "איש מכירות"
+  },
+  "taboo": {
+    "name": "הסבר את המילה"
+  }
 }
