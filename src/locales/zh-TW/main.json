@@ -1,6 +1,7 @@
 {
   "chat": {
-    "name": ""
+    "name": "聊天",
+    "send": "發送"
   },
   "error": {
     "noPermission": "您沒有授予使用攝像頭和麥克風的權限。",
@@ -10,6 +11,7 @@
     "name": "聊天"
   },
   "game": {
+    "chat": "",
     "connecting": "連接到其他玩家...",
     "nameInput": "你叫什麼名字？",
     "namePlaceholder": "陳大文",

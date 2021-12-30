@@ -1,6 +1,7 @@
 {
   "chat": {
-    "name": "Chat"
+    "name": "Chat",
+    "send": "Send"
   },
   "error": {
     "noPermission": "You did not give permission to use the camera and microphone.",
@@ -10,6 +11,7 @@
     "name": ""
   },
   "game": {
+    "chat": "Chat",
     "connecting": "Connecting to other players...",
     "nameInput": "What's your name?",
     "namePlaceholder": "John Smith",

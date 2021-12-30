@@ -1,6 +1,7 @@
 {
   "chat": {
-    "name": ""
+    "name": "Discuter",
+    "send": "Envoyer"
   },
   "error": {
     "noPermission": "Vous n'avez pas autorisé l'utilisation de la caméra et du microphone.",
@@ -10,6 +11,7 @@
     "name": "Discuter"
   },
   "game": {
+    "chat": "",
     "connecting": "Connexion à d'autres joueurs...",
     "nameInput": "Quel est ton nom?",
     "namePlaceholder": "Jean Dupont",

@@ -91,5 +91,6 @@
 	.gameContent {
 		flex-grow: 1;
 		padding: 8px;
+		box-sizing: border-box;
 	}
 </style>

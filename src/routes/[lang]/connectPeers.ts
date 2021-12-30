@@ -4,6 +4,8 @@ const RTC_CONFIG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 let checkIfAllConnected: () => void;
 
+export type Listener = (id: string, message: unknown, timestamp: number) => void;
+
 export async function connectToPeers(
 	socket: Socket,
 	stream: MediaStream,
@@ -11,16 +13,20 @@ export async function connectToPeers(
 	peerIds: string[],
 	playerNames: Record<string, string>,
 	room: string,
-	onAllConnected: () => void
+	onAllConnected: () => void,
+	onDisconnected: (id: string) => void
 ): Promise<{
 	peers: Record<string, RTCPeerConnection>;
 	remoteStreams: Record<string, MediaStream>;
 	cleanup: () => void;
+	addMessageListener: (listener: Listener) => void;
+	sendMessage: (message: unknown) => void;
 }> {
 	const peers: Record<string, RTCPeerConnection> = {};
 	const remoteStreams: Record<string, MediaStream> = {};
 	remoteStreams[selfId] = stream;
 	let allConnected = false;
+	const messageListeners: Listener[] = [];
 
 	checkIfAllConnected = () => {
 		if (allConnected) return;
@@ -45,7 +51,7 @@ export async function connectToPeers(
 	);
 
 	// when a user leaves
-	socket.on('user:leave', removeRTCPeerConnection(peers));
+	socket.on('user:leave', removeRTCPeerConnection(peers, onDisconnected));
 
 	// when new user sent an answer
 	socket.on('user:rtc:answer', onRTCAnswer(peers));
@@ -56,6 +62,12 @@ export async function connectToPeers(
 	// when a candidate arrives
 	socket.on('user:rtc:candidate', onRTCIceCandidate(peers));
 
+	socket.on('user:message:send', ({ id, message, timestamp }) => {
+		for (const listener of messageListeners) {
+			listener(id, message, timestamp);
+		}
+	});
+
 	return {
 		peers,
 		remoteStreams,
@@ -65,6 +77,7 @@ export async function connectToPeers(
 			socket.removeAllListeners('user:rtc:answer');
 			socket.removeAllListeners('user:rtc:offer');
 			socket.removeAllListeners('user:rtc:candidate');
+			socket.removeAllListeners('user:message:send');
 			for (const id in peers) {
 				peers[id].close();
 				delete peers[id];
@@ -76,6 +89,13 @@ export async function connectToPeers(
 				remoteStreams[id].getTracks().forEach((track) => track.stop());
 				delete remoteStreams[id];
 			}
+			messageListeners.length = 0;
+		},
+		addMessageListener: (listener) => {
+			messageListeners.push(listener);
+		},
+		sendMessage: (message) => {
+			socket.emit('user:message:send', { room, message });
 		}
 	};
 }
@@ -125,12 +145,15 @@ const onRTCIceCandidate =
 		await pc.addIceCandidate(candidate);
 	};
 
-const removeRTCPeerConnection = (peers: Record<string, RTCPeerConnection>) => (id) => {
-	const pc = peers[id];
-	if (!pc) return;
-	pc.close();
-	delete peers[id];
-};
+const removeRTCPeerConnection =
+	(peers: Record<string, RTCPeerConnection>, onDisconnected) => (id) => {
+		const pc = peers[id];
+		if (!pc) return;
+		pc.close();
+		delete peers[id];
+		console.log('peer disconnected', id);
+		onDisconnected(id);
+	};
 
 const onRTCAnswer =
 	(peers: Record<string, RTCPeerConnection>) =>

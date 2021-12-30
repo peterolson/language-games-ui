@@ -9,7 +9,9 @@
 	import StreamView from './streamView.svelte';
 	import { Spinner } from 'sveltestrap';
 	import { connectToPeers } from './connectPeers';
+	import type { Listener } from './connectPeers';
 	import PlayersView from './_playersView.svelte';
+	import Chat from './_chat.svelte';
 
 	const query = $page.query;
 	const games = query.get('games').split(',');
@@ -24,11 +26,16 @@
 	let userName: string;
 	let userStream: MediaStream;
 	let cleanup: () => void;
-	let peers: Record<string, RTCPeerConnection>;
+	let addMessageListener: (listener: Listener) => void;
+	let sendMessage: (message: unknown) => void;
 	let remoteStreams: Record<string, MediaStream>;
 	let playerNames: Record<string, string>;
 	let selfId: string;
 	let game: string;
+	let minPlayers: number;
+	let playerCount: number;
+	let unreadChatMessages: number = 0;
+	let selectedTab = 'game';
 
 	function lookForPlayers() {
 		lookingForPlayers = true;
@@ -44,22 +51,41 @@
 		});
 	}
 
+	function onDisconnected(id: string) {
+		playerCount--;
+		if (playerCount < minPlayers) {
+			cleanup();
+			isConnected = false;
+			connectingToPeers = false;
+			lookForPlayers();
+		}
+	}
+
 	async function onJoinGame(args) {
 		lookingForPlayers = false;
 		connectingToPeers = true;
-		const { peerIds, playerCount, room } = args;
+		const { peerIds, room } = args;
 		playerNames = args.playerNames;
 		selfId = args.selfId;
 		game = args.game;
-		({ peers, remoteStreams, cleanup } = await connectToPeers(
+		playerCount = args.playerCount;
+		minPlayers = args.minPlayers;
+		unreadChatMessages = 0;
+		({ remoteStreams, cleanup, addMessageListener, sendMessage } = await connectToPeers(
 			socket,
 			userStream,
 			selfId,
 			peerIds,
 			playerNames,
 			room,
-			onAllConnected
+			onAllConnected,
+			onDisconnected
 		));
+		addMessageListener((_id: string, message: any) => {
+			if (message?.type === 'chat' && selectedTab !== 'chat' && game !== 'chat') {
+				unreadChatMessages++;
+			}
+		});
 	}
 
 	function onAllConnected() {
@@ -79,6 +105,13 @@
 		selectingMedia = false;
 		lookForPlayers();
 	}
+
+	const selectTab = (tab: string) => () => {
+		selectedTab = tab;
+		if (tab === 'chat') {
+			unreadChatMessages = 0;
+		}
+	};
 </script>
 
 <div class="container" class:rtl={language.rtl}>
@@ -108,7 +141,37 @@
 						<Spinner color="primary" />
 					</div>
 				{:else if isConnected}
-					Game goes here!
+					<div class="gameTabs">
+						{#if game !== 'chat'}
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<button
+										class="nav-link"
+										class:active={selectedTab === 'game'}
+										on:click={selectTab('game')}
+									>
+										{$_(`${game}.name`)}
+									</button>
+								</li>
+								<li class="nav-item">
+									<button
+										class="nav-link"
+										class:active={selectedTab === 'chat'}
+										on:click={selectTab('chat')}
+									>
+										{$_('chat.name')}
+										{#if unreadChatMessages > 0}
+											<span class="badge badge-primary">{unreadChatMessages}</span>
+										{/if}
+									</button>
+								</li>
+							</ul>
+						{/if}
+						<div class:hidden={selectedTab !== 'chat' && game !== 'chat'}>
+							<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
+						</div>
+						<div class:hidden={game === 'chat' || selectedTab !== 'game'}>Game goes here!</div>
+					</div>
 				{/if}
 			</PlayersView>
 		{/if}
@@ -138,5 +201,21 @@
 	}
 	.game {
 		flex-grow: 1;
+	}
+
+	.gameTabs {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+	}
+	.gameTabs div {
+		flex-grow: 1;
+	}
+	.hidden {
+		display: none;
+	}
+
+	.badge {
+		background-color: var(--bs-primary);
 	}
 </style>

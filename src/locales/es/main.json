@@ -1,6 +1,7 @@
 {
   "chat": {
-    "name": ""
+    "name": "Chat",
+    "send": "Enviar"
   },
   "error": {
     "noPermission": "No dio permiso para usar la cámara y el micrófono.",
@@ -10,6 +11,7 @@
     "name": "Chat"
   },
   "game": {
+    "chat": "",
     "connecting": "Conectando con otros jugadores ...",
     "nameInput": "¿Cuál es tu nombre?",
     "namePlaceholder": "Juan Garcia",
