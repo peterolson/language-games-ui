@@ -296,8 +296,4 @@
 	.center {
 		text-align: center;
 	}
-
-	ul {
-		margin-block-end: 0;
-	}
 </style>
