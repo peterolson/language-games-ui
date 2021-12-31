@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { games } from '../../games';
-	import { languages, parseLang } from '../../data/languages';
+	import { parseLang } from '../../data/languages';
 	import { _ } from '../../i18n';
-	import { Breadcrumb, BreadcrumbItem } from 'sveltestrap';
 
 	const { lang } = $page.params;
 	const { room, langCode, language } = parseLang(lang);

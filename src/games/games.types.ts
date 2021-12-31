@@ -3,4 +3,5 @@ export type Game = {
 	key: string;
 	supportedLocales: string[] | '*';
 	Summary: any;
+	Controller: any;
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { colorFromString } from '../../data/color';
 
-	import { afterUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import type { Listener } from './connectPeers';
 	import { _ } from 'svelte-i18n';

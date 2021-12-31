@@ -12,6 +12,7 @@
 	import type { Listener } from './connectPeers';
 	import PlayersView from './_playersView.svelte';
 	import Chat from './_chat.svelte';
+	import { games as gamesData } from '../../games';
 
 	const query = $page.query;
 	const games = query.get('games').split(',');
@@ -36,6 +37,8 @@
 	let playerCount: number;
 	let unreadChatMessages: number = 0;
 	let selectedTab = 'game';
+	let roomId: string;
+	let GameController;
 
 	function lookForPlayers() {
 		lookingForPlayers = true;
@@ -71,6 +74,7 @@
 		playerCount = args.playerCount;
 		minPlayers = args.minPlayers;
 		unreadChatMessages = 0;
+		roomId = room;
 		({ remoteStreams, cleanup, addMessageListener, sendMessage } = await connectToPeers(
 			socket,
 			userStream,
@@ -91,6 +95,8 @@
 	function onAllConnected() {
 		connectingToPeers = false;
 		isConnected = true;
+		const gameObject = gamesData.find((g) => g.key === game);
+		GameController = gameObject.Controller;
 	}
 
 	onDestroy(() => {
@@ -167,10 +173,20 @@
 								</li>
 							</ul>
 						{/if}
-						<div class:hidden={selectedTab !== 'chat' && game !== 'chat'}>
-							<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
+						<div class="tabContent">
+							<div class:hidden={selectedTab !== 'chat' && game !== 'chat'}>
+								<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
+							</div>
+							<div class:hidden={game === 'chat' || selectedTab !== 'game'}>
+								<GameController
+									room={roomId}
+									{playerNames}
+									{selfId}
+									{addMessageListener}
+									{sendMessage}
+								/>
+							</div>
 						</div>
-						<div class:hidden={game === 'chat' || selectedTab !== 'game'}>Game goes here!</div>
 					</div>
 				{/if}
 			</PlayersView>
@@ -187,6 +203,9 @@
 	nav {
 		display: flex;
 		padding: 0 8px;
+	}
+	.nav {
+		margin-bottom: 8px;
 	}
 
 	.waiting {
@@ -210,6 +229,7 @@
 	}
 	.gameTabs div {
 		flex-grow: 1;
+		height: 100%;
 	}
 	.hidden {
 		display: none;
@@ -217,5 +237,11 @@
 
 	.badge {
 		background-color: var(--bs-primary);
+	}
+
+	.tabContent {
+		height: 100%;
+		overflow: auto;
+		flex-basis: 0;
 	}
 </style>

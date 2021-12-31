@@ -73,7 +73,6 @@
 <style>
 	main {
 		display: flex;
-		flex-wrap: wrap;
 		margin-left: -12px;
 		margin-right: -12px;
 		height: 100%;
