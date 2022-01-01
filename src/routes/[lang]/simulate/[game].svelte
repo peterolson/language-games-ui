@@ -52,7 +52,8 @@
 <div class="players" class:rtl={language.rtl}>
 	{#each players as player}
 		<div>
-			<GameController
+			<svelte:component
+				this={GameController}
 				{room}
 				{playerNames}
 				selfId={player.id}

@@ -178,7 +178,8 @@
 								<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
 							</div>
 							<div class:hidden={game === 'chat' || selectedTab !== 'game'}>
-								<GameController
+								<svelte:component
+									this={GameController}
 									room={roomId}
 									{playerNames}
 									{selfId}

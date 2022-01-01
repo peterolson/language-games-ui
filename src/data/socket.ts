@@ -1,10 +1,12 @@
-import { browser } from '$app/env';
+import { browser, dev } from '$app/env';
 import { io, Socket } from 'socket.io-client';
 
 let socket: Socket;
 
+export const endpoint = dev ? 'http://localhost:3004' : 'https://api.languageinput.com';
+
 function initializeSocket() {
-	socket = io('http://localhost:3004', {
+	socket = io(endpoint, {
 		transports: ['websocket'] // HTTP long-polling is disabled
 	});
 	socket.on('connect', () => {
