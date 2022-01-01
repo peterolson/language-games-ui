@@ -236,7 +236,6 @@
 	}
 	.faces {
 		display: flex;
-		flex-direction: column;
 		justify-content: center;
 		flex-wrap: wrap;
 		flex-grow: 1;
@@ -244,10 +243,9 @@
 		overflow: auto;
 	}
 	.faces img {
-		width: auto;
-		height: 25%;
-		max-width: 33%;
-		max-height: 256px;
+		width: 33%;
+		height: auto;
+		max-width: 256px;
 		border: 5px solid transparent;
 		cursor: pointer;
 		object-fit: contain;
@@ -256,8 +254,7 @@
 
 	@media (min-width: 768px) {
 		.faces img {
-			height: 33%;
-			max-width: 25%;
+			width: 25%;
 		}
 	}
 
