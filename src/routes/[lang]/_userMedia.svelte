@@ -8,6 +8,11 @@
 	import StreamView from './streamView.svelte';
 
 	export let onSelectedMedia: (stream: MediaStream, name: string) => void;
+	const noiseCancellation = {
+		autoGainControl: true,
+		echoCancellation: true,
+		noiseSuppression: true
+	};
 
 	let microphones: MediaDeviceInfo[] = [];
 	let selectedMicrophone: string;
@@ -45,7 +50,7 @@
 	async function changeInput() {
 		try {
 			const constraints = {
-				audio: { deviceId: selectedMicrophone },
+				audio: { deviceId: selectedMicrophone, ...noiseCancellation },
 				video: { deviceId: selectedCamera }
 			};
 			const newStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -60,7 +65,7 @@
 		if (!browser) return;
 		try {
 			stream = await navigator.mediaDevices.getUserMedia({
-				audio: true,
+				audio: noiseCancellation,
 				video: true
 			});
 			const devices = await navigator.mediaDevices.enumerateDevices();
