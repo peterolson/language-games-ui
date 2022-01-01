@@ -1,7 +1,5 @@
 import type { Socket } from 'socket.io-client';
 
-const RTC_CONFIG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-
 let checkIfAllConnected: () => void;
 
 export type Listener = (id: string, message: unknown, timestamp: number) => void;
@@ -28,6 +26,8 @@ export async function connectToPeers(
 	let allConnected = false;
 	const messageListeners: Listener[] = [];
 
+	const iceServers = await fetch(`/api/ice-servers.json`).then((res) => res.json());
+
 	checkIfAllConnected = () => {
 		if (allConnected) return;
 		for (const id in playerNames) {
@@ -47,7 +47,9 @@ export async function connectToPeers(
 	};
 
 	await Promise.all(
-		peerIds.map((id) => initRTCPeerConnection(peers, remoteStreams, socket, stream)(selfId, id))
+		peerIds.map((id) =>
+			initRTCPeerConnection(iceServers, peers, remoteStreams, socket, stream)(selfId, id)
+		)
 	);
 
 	// when a user leaves
@@ -57,7 +59,7 @@ export async function connectToPeers(
 	socket.on('user:rtc:answer', onRTCAnswer(peers));
 
 	// when a user gets an offer
-	socket.on('user:rtc:offer', onRTCoffer(peers, remoteStreams, socket, stream));
+	socket.on('user:rtc:offer', onRTCoffer(iceServers, peers, remoteStreams, socket, stream));
 
 	// when a candidate arrives
 	socket.on('user:rtc:candidate', onRTCIceCandidate(peers));
@@ -102,13 +104,14 @@ export async function connectToPeers(
 
 const initRTCPeerConnection =
 	(
+		iceServers: RTCIceServer[],
 		peers: Record<string, RTCPeerConnection>,
 		remoteStreams: Record<string, MediaStream>,
 		socket: Socket,
 		stream: MediaStream
 	) =>
 	async (selfId: string, id: string) => {
-		const pc = new RTCPeerConnection(RTC_CONFIG);
+		const pc = new RTCPeerConnection({ iceServers });
 
 		remoteStreams[id] = remoteStreams[id] || new MediaStream();
 
@@ -171,6 +174,7 @@ const onRTCAnswer =
 
 const onRTCoffer =
 	(
+		iceServers: RTCIceServer[],
 		peers: Record<string, RTCPeerConnection>,
 		remoteStreams: Record<string, MediaStream>,
 		socket: Socket,
@@ -178,7 +182,7 @@ const onRTCoffer =
 	) =>
 	async ({ id, offer }) => {
 		if (!offer) return;
-		const pc = new RTCPeerConnection(RTC_CONFIG);
+		const pc = new RTCPeerConnection({ iceServers });
 
 		remoteStreams[id] = remoteStreams[id] || new MediaStream();
 		addLocalStream(stream, pc);
