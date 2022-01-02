@@ -61,6 +61,7 @@ export async function connectToPeers(
 		console.log(participant);
 	});
 	twilioRoom.on('trackSubscribed', (track, _, participant) => {
+		console.log('Track Subscribed:', track.kind, participant.identity);
 		const id = participant.identity;
 		remoteTracks[id] = remoteTracks[id] || [];
 		attachAttachableTracksForRemoteParticipant(remoteTracks[id], participant);
@@ -79,12 +80,14 @@ export async function connectToPeers(
 
 	const messageListeners: Listener[] = [];
 	socket.on('user:message:send', ({ id, message, timestamp }) => {
+		console.log('Received message from user:', id, message, timestamp);
 		for (const listener of messageListeners) {
 			listener(id, message, timestamp);
 		}
 	});
 
 	socket.on('user:leave', (id) => {
+		console.log('User left:', id);
 		onDisconnected(id);
 	});
 
