@@ -43,7 +43,7 @@
 
 	function generateImages() {
 		const images: string[] = [];
-		const subset = random.subset(56000, totalFaces);
+		const subset = random.subset(70000, totalFaces);
 		for (const n of subset) {
 			const padded = ('00000' + n).slice(-5);
 			images.push(`https://s3.us-east-2.amazonaws.com/data.languagegam.es/faces/${padded}.jpg`);
