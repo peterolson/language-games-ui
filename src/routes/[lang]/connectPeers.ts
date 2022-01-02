@@ -20,7 +20,7 @@ async function importTwilioScript() {
 			return;
 		}
 		const script = document.createElement('script');
-		script.src = 'https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js';
+		script.src = '//sdk.twilio.com/js/video/releases/2.18.2/twilio-video.min.js';
 		script.onload = () => {
 			isTwilioImported = true;
 			resolve();
