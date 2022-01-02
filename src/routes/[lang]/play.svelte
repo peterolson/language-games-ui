@@ -103,7 +103,6 @@
 	}
 
 	onDestroy(() => {
-		console.log('Cleanup', cleanup, userTracks);
 		if (socket) {
 			socket.off('game-joined', onJoinGame);
 		}

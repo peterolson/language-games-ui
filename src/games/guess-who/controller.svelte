@@ -240,7 +240,6 @@
 		flex-wrap: wrap;
 		flex-grow: 1;
 		height: 100%;
-		overflow: auto;
 	}
 	.faces img {
 		width: 33%;
