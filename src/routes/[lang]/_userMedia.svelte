@@ -7,7 +7,9 @@
 	import { nameStore } from '../../data/stores';
 	import StreamView from './streamView.svelte';
 
-	export let onSelectedMedia: (stream: MediaStream, name: string) => void;
+	export let onSelectedMedia: (tracks: MediaStreamTrack[], name: string) => void;
+	export let onSetTracks: (tracks: MediaStreamTrack[]) => void;
+
 	const noiseCancellation = {
 		autoGainControl: true,
 		echoCancellation: true,
@@ -21,6 +23,7 @@
 	let errorMessage: string;
 
 	let stream: MediaStream;
+	let tracks: MediaStreamTrack[];
 
 	function gotDevices(deviceInfos: MediaDeviceInfo[]) {
 		for (const deviceInfo of deviceInfos) {
@@ -56,9 +59,15 @@
 			const newStream = await navigator.mediaDevices.getUserMedia(constraints);
 			stream.getTracks().forEach((track) => track.stop());
 			stream = newStream;
+			attachTracks(newStream);
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	function attachTracks(stream: MediaStream) {
+		tracks = stream.getTracks();
+		onSetTracks(tracks);
 	}
 
 	onMount(async () => {
@@ -68,6 +77,7 @@
 				audio: noiseCancellation,
 				video: true
 			});
+			attachTracks(stream);
 			const devices = await navigator.mediaDevices.enumerateDevices();
 			gotDevices(devices);
 		} catch (error) {
@@ -77,7 +87,7 @@
 
 	function onSubmit(event: Event) {
 		event.preventDefault();
-		onSelectedMedia(stream, $nameStore);
+		onSelectedMedia(tracks, $nameStore);
 	}
 </script>
 
@@ -98,7 +108,7 @@
 			</Alert>
 		{:else}
 			<div class="videoPreview">
-				<StreamView {stream} isSelfVideo />
+				<StreamView bind:tracks isSelfVideo />
 			</div>
 
 			<div class="inputs">

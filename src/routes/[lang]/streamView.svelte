@@ -2,47 +2,68 @@
 	import { _ } from 'svelte-i18n';
 	import { Icon } from 'sveltestrap';
 
-	export let stream: MediaStream;
-	export let isSelfVideo: boolean;
 	export let name = '';
 	export let hideText = false;
+	export let tracks: MediaStreamTrack[];
+	export let isSelfVideo = false;
 
 	let video: HTMLVideoElement;
-
+	let audio: HTMLAudioElement;
 	let muted = false;
 	let cameraHidden = false;
 
 	$: {
-		if (video && stream) {
-			video.srcObject = stream;
-			const audioTracks = stream.getAudioTracks();
-			if (audioTracks.length) {
-				muted = !audioTracks[0].enabled;
+		tracks?.forEach((track) => {
+			if (track.kind === 'video') {
+				cameraHidden = !track.enabled;
+				if (video) {
+					video.srcObject = streamFromTrack(track);
+				}
 			}
-			const videoTracks = stream.getVideoTracks();
-			if (videoTracks.length) {
-				cameraHidden = !videoTracks[0].enabled;
+			if (track.kind === 'audio') {
+				muted = !track.enabled;
+				if (audio) {
+					audio.srcObject = streamFromTrack(track);
+				}
 			}
-		}
+		});
 	}
 
 	function toggleMute() {
 		muted = !muted;
-		stream.getAudioTracks()[0].enabled = !muted;
+		tracks.forEach((track) => {
+			if (track.kind === 'audio') {
+				track.enabled = !muted;
+			}
+		});
 	}
 
 	function toggleHidden() {
 		cameraHidden = !cameraHidden;
-		stream.getVideoTracks()[0].enabled = !cameraHidden;
+		tracks.forEach((track) => {
+			if (track.kind === 'video') {
+				track.enabled = !cameraHidden;
+			}
+		});
+	}
+
+	function streamFromTrack(track: MediaStreamTrack) {
+		const stream = new MediaStream();
+		stream.addTrack(track);
+		return stream;
 	}
 </script>
 
 <div class="videoContainer">
-	<video playsinline autoplay bind:this={video} muted={isSelfVideo} />
+	<div class="mediaContainer">
+		<!-- svelte-ignore a11y-media-has-caption -->
+		<video playsinline autoplay bind:this={video} />
+		<audio autoplay bind:this={audio} muted={isSelfVideo} />
+	</div>
 	{#if name}
 		<div class="name">{name}</div>
 	{/if}
-	{#if stream}
+	{#if tracks?.length}
 		<div class="muteContainer">
 			<button class="btn btn-light" on:click={toggleMute}>
 				<Icon name={muted ? 'mic-fill' : 'mic-mute-fill'} />
@@ -70,7 +91,8 @@
 		height: 100%;
 	}
 
-	video {
+	.mediaContainer,
+	.mediaContainer video {
 		width: 100%;
 		height: 100%;
 		margin: auto;

@@ -1,97 +1,100 @@
 import type { Socket } from 'socket.io-client';
+declare type TwilioVideo = typeof import('twilio-video');
+import type {
+	RemoteAudioTrack,
+	RemoteParticipant,
+	RemoteTrack,
+	RemoteVideoTrack
+} from 'twilio-video';
 
-let checkIfAllConnected: () => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const Twilio: any;
+
+// https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js
+
+let isTwilioImported = false;
+async function importTwilioScript() {
+	return new Promise<void>((resolve, reject) => {
+		if (isTwilioImported) {
+			resolve();
+			return;
+		}
+		const script = document.createElement('script');
+		script.src = 'https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js';
+		script.onload = () => {
+			isTwilioImported = true;
+			resolve();
+		};
+		script.onerror = reject;
+		document.head.appendChild(script);
+	});
+}
 
 export type Listener = (id: string, message: unknown, timestamp: number) => void;
 
 export async function connectToPeers(
 	socket: Socket,
-	stream: MediaStream,
+	tracks: MediaStreamTrack[],
 	selfId: string,
 	peerIds: string[],
 	playerNames: Record<string, string>,
 	room: string,
 	onAllConnected: () => void,
-	onDisconnected: (id: string) => void
+	onDisconnected: (id: string) => void,
+	onTrackSubscribed: (remoteTracks: Record<string, MediaStreamTrack[]>) => void
 ): Promise<{
-	peers: Record<string, RTCPeerConnection>;
-	remoteStreams: Record<string, MediaStream>;
+	remoteTracks: Record<string, MediaStreamTrack[]>;
 	cleanup: () => void;
 	addMessageListener: (listener: Listener) => void;
 	sendMessage: (message: unknown) => void;
 }> {
-	const peers: Record<string, RTCPeerConnection> = {};
-	const remoteStreams: Record<string, MediaStream> = {};
-	remoteStreams[selfId] = stream;
-	let allConnected = false;
-	const messageListeners: Listener[] = [];
+	const { token } = await fetch(
+		`/api/twilio-access-token.json?identity=${selfId}&room=${room}`
+	).then((res) => res.json());
 
-	const iceServers = await fetch(`/api/ice-servers.json`).then((res) => res.json());
-
-	checkIfAllConnected = () => {
-		if (allConnected) return;
-		for (const id in playerNames) {
-			if (!remoteStreams[id]) {
-				return;
-			}
-			const stream = remoteStreams[id];
-			if (stream.getTracks().length === 0) {
-				return;
-			}
-			if (!stream.active) {
-				return;
-			}
+	const remoteTracks: Record<string, MediaStreamTrack[]> = {};
+	await importTwilioScript();
+	const Video: TwilioVideo = Twilio.Video;
+	const twilioRoom = await Video.connect(token, { name: room, tracks });
+	twilioRoom.on('participantConnected', (participant) => {
+		console.log('Participant connected:', participant.identity);
+		console.log(participant);
+	});
+	twilioRoom.on('trackSubscribed', (track, _, participant) => {
+		const id = participant.identity;
+		remoteTracks[id] = remoteTracks[id] || [];
+		attachAttachableTracksForRemoteParticipant(remoteTracks[id], participant);
+		onTrackSubscribed(remoteTracks);
+		if (Object.keys(remoteTracks).length === peerIds.length) {
+			onAllConnected();
 		}
-		allConnected = true;
-		onAllConnected();
-	};
+	});
+	twilioRoom.on('participantDisconnected', (participant) => {
+		console.log('Participant disconnected:', participant.identity);
+		onDisconnected(participant.identity);
+	});
+	twilioRoom.once('disconnected', function () {
+		console.log('You left the Room:', twilioRoom.name);
+	});
 
-	await Promise.all(
-		peerIds.map((id) =>
-			initRTCPeerConnection(iceServers, peers, remoteStreams, socket, stream)(selfId, id)
-		)
-	);
-
-	// when a user leaves
-	socket.on('user:leave', removeRTCPeerConnection(peers, onDisconnected));
-
-	// when new user sent an answer
-	socket.on('user:rtc:answer', onRTCAnswer(peers));
-
-	// when a user gets an offer
-	socket.on('user:rtc:offer', onRTCoffer(iceServers, peers, remoteStreams, socket, stream));
-
-	// when a candidate arrives
-	socket.on('user:rtc:candidate', onRTCIceCandidate(peers));
-
+	const messageListeners: Listener[] = [];
 	socket.on('user:message:send', ({ id, message, timestamp }) => {
 		for (const listener of messageListeners) {
 			listener(id, message, timestamp);
 		}
 	});
 
+	socket.on('user:leave', (id) => {
+		onDisconnected(id);
+	});
+
 	return {
-		peers,
-		remoteStreams,
+		remoteTracks,
 		cleanup: () => {
+			messageListeners.length = 0;
+			twilioRoom.disconnect();
 			socket.emit('user:leave', room);
 			socket.removeAllListeners('user:leave');
-			socket.removeAllListeners('user:rtc:answer');
-			socket.removeAllListeners('user:rtc:offer');
-			socket.removeAllListeners('user:rtc:candidate');
-			socket.removeAllListeners('user:message:send');
-			for (const id in peers) {
-				peers[id].close();
-				delete peers[id];
-			}
-			for (const id in remoteStreams) {
-				if (id === selfId) {
-					continue;
-				}
-				remoteStreams[id].getTracks().forEach((track) => track.stop());
-				delete remoteStreams[id];
-			}
-			messageListeners.length = 0;
 		},
 		addMessageListener: (listener) => {
 			messageListeners.push(listener);
@@ -102,110 +105,32 @@ export async function connectToPeers(
 	};
 }
 
-const initRTCPeerConnection =
-	(
-		iceServers: RTCIceServer[],
-		peers: Record<string, RTCPeerConnection>,
-		remoteStreams: Record<string, MediaStream>,
-		socket: Socket,
-		stream: MediaStream
-	) =>
-	async (selfId: string, id: string) => {
-		const pc = new RTCPeerConnection({ iceServers });
+function attachAttachableTracksForRemoteParticipant(
+	mediaTracks: MediaStreamTrack[],
+	participant: RemoteParticipant
+) {
+	mediaTracks.length = 0;
+	participant.tracks.forEach((publication) => {
+		if (!publication.isSubscribed) return;
 
-		remoteStreams[id] = remoteStreams[id] || new MediaStream();
+		if (!trackExistsAndIsAttachable(publication.track)) return;
 
-		addLocalStream(stream, pc);
-		addRemoteStream(remoteStreams[id], pc);
+		attachTrack(mediaTracks, publication.track);
+	});
+}
 
-		pc.onicecandidate = sendIceCandidate(socket, id);
+function attachTrack(mediaTracks: MediaStreamTrack[], track: RemoteAudioTrack | RemoteVideoTrack) {
+	const mediaElement = track.attach();
+	const mediaStream = mediaElement.srcObject as MediaStream;
+	mediaStream.getTracks().forEach((track) => mediaTracks.push(track));
+}
 
-		// add peerconnection to peerlist
-		peers[id] = pc;
-
-		// only send offer if we are initiator
-		if (id < selfId) {
-			const offer = await pc.createOffer();
-			await pc.setLocalDescription(offer);
-			socket.emit('user:rtc:offer', { id, offer });
-		}
-	};
-
-const sendIceCandidate =
-	(socket: Socket, id: string) =>
-	({ candidate }) => {
-		if (candidate) {
-			socket.emit('user:rtc:candidate', { id, candidate });
-		}
-	};
-
-const onRTCIceCandidate =
-	(peers: Record<string, RTCPeerConnection>) =>
-	async ({ id, candidate }) => {
-		if (!candidate) return;
-		const pc = peers[id];
-		if (!pc) return;
-		await pc.addIceCandidate(candidate);
-	};
-
-const removeRTCPeerConnection =
-	(peers: Record<string, RTCPeerConnection>, onDisconnected) => (id) => {
-		const pc = peers[id];
-		if (!pc) return;
-		pc.close();
-		delete peers[id];
-		console.log('peer disconnected', id);
-		onDisconnected(id);
-	};
-
-const onRTCAnswer =
-	(peers: Record<string, RTCPeerConnection>) =>
-	async ({ id, answer }) => {
-		const pc = peers[id];
-
-		if (!pc) return;
-
-		if (!answer) return;
-
-		const desc = new RTCSessionDescription(answer);
-
-		await pc.setRemoteDescription(desc);
-	};
-
-const onRTCoffer =
-	(
-		iceServers: RTCIceServer[],
-		peers: Record<string, RTCPeerConnection>,
-		remoteStreams: Record<string, MediaStream>,
-		socket: Socket,
-		stream: MediaStream
-	) =>
-	async ({ id, offer }) => {
-		if (!offer) return;
-		const pc = new RTCPeerConnection({ iceServers });
-
-		remoteStreams[id] = remoteStreams[id] || new MediaStream();
-		addLocalStream(stream, pc);
-		addRemoteStream(remoteStreams[id], pc);
-
-		pc.onicecandidate = sendIceCandidate(socket, id);
-		peers[id] = pc;
-		const desc = new RTCSessionDescription(offer);
-		pc.setRemoteDescription(desc);
-		const answer = await pc.createAnswer();
-		await pc.setLocalDescription(answer);
-		socket.emit('user:rtc:answer', { id, answer });
-	};
-
-const addLocalStream = (stream: MediaStream, pc: RTCPeerConnection) => {
-	stream.getTracks().forEach((track) => pc.addTrack(track, stream));
-};
-
-const addRemoteStream = (stream: MediaStream, pc: RTCPeerConnection) => {
-	pc.ontrack = async (evt) => {
-		stream.addTrack(evt.track);
-		if (checkIfAllConnected) {
-			checkIfAllConnected();
-		}
-	};
-};
+function trackExistsAndIsAttachable(
+	track?: RemoteTrack
+): track is RemoteAudioTrack | RemoteVideoTrack {
+	return (
+		!!track &&
+		((track as RemoteAudioTrack).attach !== undefined ||
+			(track as RemoteVideoTrack).attach !== undefined)
+	);
+}

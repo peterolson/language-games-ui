@@ -2,8 +2,9 @@
 	import StreamView from './streamView.svelte';
 
 	export let playerNames: Record<string, string>;
-	export let remoteStreams: Record<string, MediaStream>;
+	export let remoteTracks: Record<string, MediaStreamTrack[]>;
 	export let selfId: string;
+	export let userTracks: MediaStreamTrack[];
 
 	let screenWidth: number;
 	let screenHeight: number;
@@ -48,20 +49,15 @@
 	<div class="videoContainer" class:vertical={isVertical}>
 		<div style={`height:${videoHeight}px;width:${videoWidth}px`}>
 			<StreamView
-				stream={remoteStreams?.[selfId]}
+				tracks={userTracks}
 				name={playerNames[selfId]}
-				isSelfVideo
 				hideText={videoWidth < 250}
+				isSelfVideo
 			/>
 		</div>
-		{#each Object.keys(playerNames).filter((k) => k !== selfId) as id}
+		{#each Object.keys(remoteTracks || {}) as id}
 			<div style={`height:${videoHeight}px;width:${videoWidth}px`}>
-				<StreamView
-					stream={remoteStreams?.[id]}
-					name={playerNames[id]}
-					isSelfVideo={false}
-					hideText={videoWidth < 250}
-				/>
+				<StreamView tracks={remoteTracks[id]} name={playerNames[id]} hideText={videoWidth < 250} />
 			</div>
 		{/each}
 	</div>

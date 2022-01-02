@@ -34,6 +34,7 @@
 		"socket.io-client": "^4.4.0",
 		"svelte-i18n": "^3.3.13",
 		"sveltestrap": "^5.6.3",
-		"twilio": "^3.72.0"
+		"twilio": "^3.72.0",
+		"twilio-video": "^2.18.2"
 	}
 }

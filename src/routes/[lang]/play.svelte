@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import { parseLang } from '../../data/languages';
 	import { _ } from 'svelte-i18n';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { getSocket } from '../../data/socket';
 	import type { Socket } from 'socket.io-client';
 	import UserMedia from './_userMedia.svelte';
@@ -25,11 +25,11 @@
 	let isConnected = false;
 	let socket: Socket;
 	let userName: string;
-	let userStream: MediaStream;
+	let userTracks: MediaStreamTrack[];
 	let cleanup: () => void;
 	let addMessageListener: (listener: Listener) => void;
 	let sendMessage: (message: unknown) => void;
-	let remoteStreams: Record<string, MediaStream>;
+	let remoteTracks: Record<string, MediaStreamTrack[]>;
 	let playerNames: Record<string, string>;
 	let selfId: string;
 	let game: string;
@@ -75,15 +75,18 @@
 		minPlayers = args.minPlayers;
 		unreadChatMessages = 0;
 		roomId = room;
-		({ remoteStreams, cleanup, addMessageListener, sendMessage } = await connectToPeers(
+		({ remoteTracks, cleanup, addMessageListener, sendMessage } = await connectToPeers(
 			socket,
-			userStream,
+			userTracks,
 			selfId,
 			peerIds,
 			playerNames,
 			room,
 			onAllConnected,
-			onDisconnected
+			onDisconnected,
+			(tracks) => {
+				remoteTracks = tracks;
+			}
 		));
 		addMessageListener((_id: string, message: any) => {
 			if (message?.type === 'chat' && selectedTab !== 'chat' && game !== 'chat') {
@@ -100,14 +103,19 @@
 	}
 
 	onDestroy(() => {
-		if (!socket) return;
-		socket.off('game-joined', onJoinGame);
+		console.log('Cleanup', cleanup, userTracks);
+		if (socket) {
+			socket.off('game-joined', onJoinGame);
+		}
 		if (cleanup) cleanup();
+		if (userTracks) {
+			userTracks.forEach((track) => track.stop());
+		}
 	});
 
-	function onSelectedMedia(stream: MediaStream, name: string) {
+	function onSelectedMedia(tracks: MediaStreamTrack[], name: string) {
 		userName = name;
-		userStream = stream;
+		userTracks = tracks;
 		selectingMedia = false;
 		lookForPlayers();
 	}
@@ -128,7 +136,7 @@
 	</nav>
 	<div class="game">
 		{#if selectingMedia}
-			<UserMedia {onSelectedMedia} />
+			<UserMedia {onSelectedMedia} onSetTracks={(tracks) => (userTracks = tracks)} />
 		{:else if lookingForPlayers}
 			<div class="waiting">
 				<p>{$_('game.waiting')}</p>
@@ -136,11 +144,11 @@
 				<br />
 				<br />
 				<div class="videoPreview">
-					<StreamView stream={userStream} isSelfVideo name={userName} />
+					<StreamView tracks={userTracks} name={userName} isSelfVideo={true} />
 				</div>
 			</div>
 		{:else}
-			<PlayersView {remoteStreams} {playerNames} {selfId}>
+			<PlayersView {remoteTracks} {playerNames} {selfId} {userTracks}>
 				{#if connectingToPeers}
 					<div class="waiting">
 						<p>{$_('game.connecting')}</p>
