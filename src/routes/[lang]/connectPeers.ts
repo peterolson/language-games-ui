@@ -114,6 +114,13 @@ function attachAttachableTracksForRemoteParticipant(
 ) {
 	mediaTracks.length = 0;
 	participant.tracks.forEach((publication) => {
+		console.log(
+			'Publication:',
+			publication,
+			publication.isSubscribed,
+			publication.isEnabled,
+			publication.track
+		);
 		if (!publication.isSubscribed) return;
 
 		if (!trackExistsAndIsAttachable(publication.track)) return;
