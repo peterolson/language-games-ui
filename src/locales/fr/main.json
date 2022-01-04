@@ -8,10 +8,9 @@
     "videoNotReadable": "Impossible de lire la source vidéo. \nVérifiez si votre webcam est déjà utilisée par une autre application."
   },
   "free-chat": {
-    "name": "Discuter"
   },
   "game": {
-    "chat": "",
+    "chat": "Discuter",
     "connecting": "Connexion à d'autres joueurs...",
     "nameInput": "Quel est ton nom?",
     "namePlaceholder": "Jean Dupont",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} vous posera des questions sur la personne que vous avez choisie.",
     "guessing-ask": "Poser des questions",
     "guessing-ask-instructions": "Posez des questions à {0} pour obtenir des informations, telles que \"Cette personne porte-t-elle des lunettes ?\"",
-    "guessing-ask-instructions-1": "Cette personne porte-t-elle des lunettes ?",
-    "guessing-ask-instructions-2": "Cette personne est-elle un enfant ou un adulte ?",
     "guessing-ask-instructions-footer": "Appuyez sur un visage ci-dessous pour l'éliminer. \nVous devez éliminer toutes les faces sauf une.",
     "incorrect-guess": "Incorrect!",
     "name": "Qu'est-ce?",
@@ -56,6 +53,9 @@
     "name": "Vendeur"
   },
   "taboo": {
-    "name": "Expliquez le mot"
+    "name": "Expliquez le mot",
+    "nextRound": "Le prochain tour commence dans {0}...",
+    "nextWord": "Mot suivant",
+    "skip": "Sauter"
   }
 }

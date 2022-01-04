@@ -8,7 +8,6 @@
     "videoNotReadable": "Cannot read video source. Check if your webcam is already in use by another application."
   },
   "free-chat": {
-    "name": ""
   },
   "game": {
     "chat": "Chat",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} will ask you questions about the person you chose.",
     "guessing-ask": "Ask questions",
     "guessing-ask-instructions": "Ask questions to {0} for information, such as \"Is this person wearing glasses?\"",
-    "guessing-ask-instructions-1": "",
-    "guessing-ask-instructions-2": "",
     "guessing-ask-instructions-footer": "Tap a face below to eliminate it. You must eliminate all the faces except one.",
     "incorrect-guess": "Incorrect!",
     "name": "Who is it?",
@@ -56,6 +53,9 @@
     "name": "Salesman"
   },
   "taboo": {
-    "name": "Explain the word"
+    "name": "Explain the word",
+    "nextRound": "Next round starts in {0}...",
+    "nextWord": "Next word",
+    "skip": "Skip"
   }
 }

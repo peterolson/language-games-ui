@@ -8,10 +8,9 @@
     "videoNotReadable": "לא ניתן לקרוא מקור וידאו. \nבדוק אם מצלמת האינטרנט שלך כבר בשימוש על ידי יישום אחר."
   },
   "free-chat": {
-    "name": "לְשׂוֹחֵחַ"
   },
   "game": {
-    "chat": "",
+    "chat": "לְשׂוֹחֵחַ",
     "connecting": "מתחבר לשחקנים אחרים...",
     "nameInput": "מה שמך?",
     "namePlaceholder": "ישראל ישראלי",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} ישאל אותך שאלות לגבי האדם שבחרת.",
     "guessing-ask": "לשאול שאלות",
     "guessing-ask-instructions": "שאל שאלות אל {0} לקבלת מידע, כגון \"האם האדם הזה מרכיב משקפיים?\"",
-    "guessing-ask-instructions-1": "האם האדם הזה מרכיב משקפיים?",
-    "guessing-ask-instructions-2": "האם האדם הזה ילד או מבוגר?",
     "guessing-ask-instructions-footer": "הקש על פנים למטה כדי לחסל אותה. \nעליך לחסל את כל הפרצופים מלבד אחד.",
     "incorrect-guess": "לֹא נָכוֹן!",
     "name": "מי זה?",
@@ -56,6 +53,9 @@
     "name": "איש מכירות"
   },
   "taboo": {
-    "name": "הסבר את המילה"
+    "name": "הסבר את המילה",
+    "nextRound": "הסיבוב הבא מתחיל בעוד {0}...",
+    "nextWord": "המילה הבאה",
+    "skip": "לדלג"
   }
 }

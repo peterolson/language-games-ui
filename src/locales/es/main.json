@@ -8,10 +8,9 @@
     "videoNotReadable": "No se puede leer la fuente de video. \nCompruebe si su cámara web ya está siendo utilizada por otra aplicación."
   },
   "free-chat": {
-    "name": "Chat"
   },
   "game": {
-    "chat": "",
+    "chat": "Chat",
     "connecting": "Conectando con otros jugadores ...",
     "nameInput": "¿Cuál es tu nombre?",
     "namePlaceholder": "Juan Garcia",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} le hará preguntas sobre la persona que eligió.",
     "guessing-ask": "Hacer preguntas",
     "guessing-ask-instructions": "Haga preguntas a {0} para obtener información, como \"¿Esta persona usa anteojos?\"",
-    "guessing-ask-instructions-1": "¿Esta persona está usando anteojos?",
-    "guessing-ask-instructions-2": "¿Esta persona es un niño o un adulto?",
     "guessing-ask-instructions-footer": "Toque una cara a continuación para eliminarla. \nDebes eliminar todas las caras excepto una.",
     "incorrect-guess": "¡Incorrecto!",
     "name": "¿Quién es?",
@@ -56,6 +53,9 @@
     "name": "Vendedor"
   },
   "taboo": {
-    "name": "Explica la palabra"
+    "name": "Explica la palabra",
+    "nextRound": "La próxima ronda comienza en {0} ...",
+    "nextWord": "Palabra siguiente",
+    "skip": "Saltar"
   }
 }

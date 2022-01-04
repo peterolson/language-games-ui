@@ -19,6 +19,14 @@ export class Random {
 		}
 		return Array.from(set);
 	}
+
+	public item<T>(items: T[]): T {
+		return items[this.index(items.length)];
+	}
+
+	public index(max: number): number {
+		return Math.floor(this.random() * max);
+	}
 }
 
 function xmur3(str: string) {

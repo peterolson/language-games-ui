@@ -15,6 +15,7 @@ export const languages: Language[] = [
 	l('fr', 'Français', 'French'),
 	l('zh', '中文（简体）', 'Chinese - Mandarin (Simplified)', false, 'zh-CN'),
 	l('zh', '中文（繁體）', 'Chinese - Mandarin (Traditional)', false, 'zh-TW'),
+	l('ru', 'Русский', 'Russian'),
 	l('es', 'Español', 'Spanish'),
 	l('he', 'עברית', 'Hebrew', true),
 	l('asl', 'ASL', 'American Sign Language', false, 'en')

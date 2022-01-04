@@ -8,10 +8,9 @@
     "videoNotReadable": "无法读取视频源。\n检查您的网络摄像头是否已被其他应用程序使用。"
   },
   "free-chat": {
-    "name": "聊天"
   },
   "game": {
-    "chat": "",
+    "chat": "聊天",
     "connecting": "连接到其他玩家...",
     "nameInput": "你叫什么名字？",
     "namePlaceholder": "王小明",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} 会询问有关您选择的人的问题。",
     "guessing-ask": "问问题",
     "guessing-ask-instructions": "向{0}提问以获取信息，例如“这个人戴眼镜吗？”",
-    "guessing-ask-instructions-1": "这个人戴眼镜吗？",
-    "guessing-ask-instructions-2": "这个人是小孩还是大人？",
     "guessing-ask-instructions-footer": "点击下方的一张脸将其消除。\n您必须消除除一个面之外的所有面。",
     "incorrect-guess": "不正确！",
     "name": "是谁？",
@@ -56,6 +53,9 @@
     "name": "推销员"
   },
   "taboo": {
-    "name": "解释这个词"
+    "name": "解释这个词",
+    "nextRound": "下一轮开始于{0}...",
+    "nextWord": "下一个词",
+    "skip": "跳过"
   }
 }

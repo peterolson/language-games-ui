@@ -7,6 +7,7 @@ export function registerLocales(): void {
 	register('zh-TW', () => import('./locales/zh-TW/main.json'));
 	register('es', () => import('./locales/es/main.json'));
 	register('he', () => import('./locales/he/main.json'));
+	register('ru', () => import('./locales/ru/main.json'));
 }
 
 export function initializeClient(lang: string): void {

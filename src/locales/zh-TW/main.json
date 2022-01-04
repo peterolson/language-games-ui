@@ -8,10 +8,9 @@
     "videoNotReadable": "無法讀取視頻源。\n檢查您的網絡攝像頭是否已被其他應用程序使用。"
   },
   "free-chat": {
-    "name": "聊天"
   },
   "game": {
-    "chat": "",
+    "chat": "聊天",
     "connecting": "連接到其他玩家...",
     "nameInput": "你叫什麼名字？",
     "namePlaceholder": "陳大文",
@@ -27,8 +26,6 @@
     "guessing-answer-instructions": "{1} 會詢問有關您選擇的人的問題。",
     "guessing-ask": "問問題",
     "guessing-ask-instructions": "向{0}提問以獲取信息，例如“這個人戴眼鏡嗎？”",
-    "guessing-ask-instructions-1": "這個人戴眼鏡嗎？",
-    "guessing-ask-instructions-2": "這個人是小孩還是大人？",
     "guessing-ask-instructions-footer": "點擊下方的一張臉將其消除。\n您必須消除除一個面之外的所有面。",
     "incorrect-guess": "不正確！",
     "name": "是誰？",
@@ -56,6 +53,9 @@
     "name": "推銷員"
   },
   "taboo": {
-    "name": "解釋這個詞"
+    "name": "解釋這個詞",
+    "nextRound": "下一輪開始於{0}...",
+    "nextWord": "下一個詞",
+    "skip": "跳過"
   }
 }
