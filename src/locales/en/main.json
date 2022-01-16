@@ -3,6 +3,9 @@
     "name": "Chat",
     "send": "Send"
   },
+  "describe-picture": {
+    "name": "Describe the picture"
+  },
   "error": {
     "noPermission": "You did not give permission to use the camera and microphone.",
     "videoNotReadable": "Cannot read video source. Check if your webcam is already in use by another application."

@@ -3,7 +3,7 @@ import Summary from './summary.svelte';
 import Controller from './controller.svelte';
 
 const game: Game = {
-	key: 'snake-oil',
+	key: 'describe-picture',
 	supportedLocales: '*',
 	Summary,
 	Controller

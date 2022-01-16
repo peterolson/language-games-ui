@@ -2,4 +2,4 @@
 	import { _ } from '../../i18n';
 </script>
 
-<h1>{$_('snake-oil.name')}</h1>
+<h1>{$_('describe-picture.name')}</h1>

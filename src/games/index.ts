@@ -1,7 +1,7 @@
 import chat from './chat';
 import type { Game } from './games.types';
 import guessWho from './guess-who';
-import snakeOil from './snake-oil';
 import taboo from './taboo';
+import describePicture from './describe-picture';
 
-export const games: Game[] = [chat, guessWho, taboo, snakeOil];
+export const games: Game[] = [chat, guessWho, taboo, describePicture];

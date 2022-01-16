@@ -3,6 +3,9 @@
     "name": "聊天",
     "send": "發送"
   },
+  "describe-picture": {
+    "name": "描述圖片"
+  },
   "error": {
     "noPermission": "您沒有授予使用攝像頭和麥克風的權限。",
     "videoNotReadable": "無法讀取視頻源。\n檢查您的網絡攝像頭是否已被其他應用程序使用。"

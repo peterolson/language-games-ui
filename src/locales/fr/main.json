@@ -3,6 +3,9 @@
     "name": "Discuter",
     "send": "Envoyer"
   },
+  "describe-picture": {
+    "name": "Décrire l'image"
+  },
   "error": {
     "noPermission": "Vous n'avez pas autorisé l'utilisation de la caméra et du microphone.",
     "videoNotReadable": "Impossible de lire la source vidéo. \nVérifiez si votre webcam est déjà utilisée par une autre application."
