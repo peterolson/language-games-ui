@@ -4,8 +4,8 @@
 	import { gameWords } from 'multilingual-game-words';
 	import type { WordPair } from 'multilingual-game-words';
 	import { page } from '$app/stores';
-	import { parseLang } from '../../data/languages';
 	import { Icon } from 'sveltestrap';
+	import { getLanguageByCode } from '../../data/languages';
 
 	export let selfId: string;
 	export let addMessageListener: (listener: (id: string, message: string) => void) => void;
@@ -18,7 +18,7 @@
 	let missedWord: WordPair;
 
 	const { lang } = $page.params;
-	const { langCode, language } = parseLang(lang);
+	const { code: langCode } = getLanguageByCode(lang);
 
 	const playerIds = Object.keys(playerNames).sort();
 	const secondsPerTurn = 90.49;

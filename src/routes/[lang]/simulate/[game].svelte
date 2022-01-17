@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { games } from '../../../games';
-	import { languages, parseLang } from '../../../data/languages';
 	import { _ } from '../../../i18n';
+	import { locale } from 'svelte-i18n';
+	import { getLanguageByCode, isRTL } from 'src/data/languages';
 
 	const { lang, game } = $page.params;
 	const playerCount = +$page.query.get('players') || 2;
-	const { room, langCode, language } = parseLang(lang);
-	const { name, rtl } = language;
+	const { code } = getLanguageByCode(lang);
+	const room = code.split('-')[0];
 	const gameObject = games.find((g) => g.key === game);
 	const GameController = gameObject.Controller;
 
@@ -49,7 +50,7 @@
 	};
 </script>
 
-<div class="players" class:rtl={language.rtl}>
+<div class="players" class:rtl={isRTL($locale)}>
 	{#each players as player}
 		<div>
 			<svelte:component

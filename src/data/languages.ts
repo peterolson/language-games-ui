@@ -23,14 +23,14 @@ export function isRTL(locale: string): boolean {
 	return interfaceLanguages.find((l) => l.locale === locale)?.rtl ?? false;
 }
 
-export function parseLang(lang: string): { room: string; langCode: string; language: Language } {
-	const [room, tail] = lang.split('_');
-	const langCode = tail || room;
-	const language = interfaceLanguages.find((l) => l.locale === langCode);
-	return { room, langCode, language };
-}
+type TargetLanguage = {
+	en: string;
+	code: string;
+	name: string;
+	speakers: number;
+};
 
-export const targetLanguages = `English	en	English	1348
+export const targetLanguages: TargetLanguage[] = `English	en	English	1348
 Japanese	ja	日本語	126
 Russian	ru	Русский	258
 Chinese\xA0(Simplified)	zh-CN	中文 (简体)	1120
@@ -290,3 +290,7 @@ Auslan		Auslan	0.01`
 		return { en, code, name, speakers: +speakers || 0 };
 	})
 	.sort((a, b) => b.speakers - a.speakers);
+
+export function getLanguageByCode(code: string): TargetLanguage {
+	return targetLanguages.find((l) => l.code === code);
+}

@@ -7,18 +7,10 @@
 	registerLocales();
 
 	export const load = async ({ page }) => {
-		const lang = page.params.lang || '';
-		let [room, langCode] = lang.split('_');
-		if (!langCode) {
-			langCode = room;
-		}
 		if (!browser) {
-			initializeServer(langCode);
+			initializeServer('');
 		} else {
-			initializeClient(langCode);
-		}
-		if (langCode) {
-			locale.set(langCode);
+			initializeClient('');
 		}
 		await waitLocale();
 		return {};

@@ -12,7 +12,7 @@
 	<title>{$_('site.title')}</title>
 </svelte:head>
 
-<div class="container bg-light" class:rtl={isRTL($_locale)}>
+<div class="container bg-white" class:rtl={isRTL($_locale)}>
 	<div class="px-4 py-4 mt-1 mb-1 text-center">
 		<img class="d-block mx-auto mb-1" src="/icon.svg" alt="" width="128" height="128" />
 		<h1 class="display-5 fw-bold">{$_('site.title')}</h1>
@@ -21,7 +21,7 @@
 		</div>
 		<div>
 			{$_('site.interfaceLanguagePrompt')}
-			<select bind:value={$_locale} class="bg-light">
+			<select bind:value={$_locale}>
 				{#each interfaceLanguages as { locale, name, en }}
 					<option value={locale}>{name}</option>
 				{/each}
@@ -42,7 +42,6 @@
 <style>
 	.container {
 		border: 1px solid #ccc;
-		border-radius: 32px;
 	}
 	.language-grid {
 		display: grid;
