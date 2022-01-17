@@ -52,6 +52,13 @@
     "unmute": "Unmute"
   },
   "play": "Play",
+  "site": {
+    "description": "Practice speaking through games with real people",
+    "interfaceLanguagePrompt": "I speak",
+    "targetLanguagePrompt": "I want to practice...",
+    "title": "Language games",
+    "wantToLearn": "I want to learn..."
+  },
   "snake-oil": {
     "name": "Salesman"
   },

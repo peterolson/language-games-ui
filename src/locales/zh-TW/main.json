@@ -52,6 +52,13 @@
     "unmute": "取消靜音"
   },
   "play": "玩",
+  "site": {
+    "description": "通過遊戲與真人練習說話",
+    "interfaceLanguagePrompt": "我說",
+    "targetLanguagePrompt": "我想練...",
+    "title": "語言遊戲",
+    "wantToLearn": ""
+  },
   "snake-oil": {
     "name": "推銷員"
   },

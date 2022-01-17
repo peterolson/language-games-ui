@@ -50,6 +50,13 @@
     "unmute": "Включить звук"
   },
   "play": "Играть в",
+  "site": {
+    "description": "Практикуйтесь в разговорной игре с реальными людьми",
+    "interfaceLanguagePrompt": "Я говорю",
+    "targetLanguagePrompt": "хочу потренироваться...",
+    "title": "Языковые игры",
+    "wantToLearn": ""
+  },
   "snake-oil": {
     "name": "Продавец"
   },

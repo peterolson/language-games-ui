@@ -52,6 +52,13 @@
     "unmute": "בטל השתקה"
   },
   "play": "לְשַׂחֵק",
+  "site": {
+    "description": "תרגל דיבור דרך משחקים עם אנשים אמיתיים",
+    "interfaceLanguagePrompt": "אני מדבר",
+    "targetLanguagePrompt": "אני רוצה להתאמן...",
+    "title": "משחקי שפה",
+    "wantToLearn": "אני רוצה ללמוד..."
+  },
   "snake-oil": {
     "name": "איש מכירות"
   },

@@ -52,6 +52,13 @@
     "unmute": "Rétablir le son"
   },
   "play": "Jouer",
+  "site": {
+    "description": "Entraînez-vous à parler à travers des jeux avec de vraies personnes",
+    "interfaceLanguagePrompt": "Je parle",
+    "targetLanguagePrompt": "Je veux pratiquer...",
+    "title": "Jeux de langage",
+    "wantToLearn": "Je veux apprendre..."
+  },
   "snake-oil": {
     "name": "Vendeur"
   },
