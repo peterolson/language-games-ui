@@ -3,7 +3,7 @@
 	import { games } from '../../../games';
 	import { _ } from '../../../i18n';
 	import { locale } from 'svelte-i18n';
-	import { getLanguageByCode, isRTL } from 'src/data/languages';
+	import { getLanguageByCode, isRTL } from '../../../data/languages';
 
 	const { lang, game } = $page.params;
 	const playerCount = +$page.query.get('players') || 2;
