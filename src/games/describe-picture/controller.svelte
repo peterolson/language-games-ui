@@ -129,6 +129,9 @@
 
 <div class="container">
 	{#if isRevealed}
+		{#if isDrawer}
+			<button class="btn btn-primary" on:click={next}>Next</button>
+		{/if}
 		<div class="d-flex justify-content-around align-items-center flex-wrap">
 			<figure>
 				<img
@@ -144,9 +147,6 @@
 				<figcaption>{$_('describe-picture.drawingBy', translationValues)}</figcaption>
 			</figure>
 		</div>
-		{#if isDrawer}
-			<button class="btn btn-primary" on:click={next}>Next</button>
-		{/if}
 	{:else if isDrawer}
 		<div class="alert alert-info">
 			<h4 class="alert-heading">{$_('describe-picture.instructions-draw')}</h4>
