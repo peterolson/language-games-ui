@@ -6,11 +6,14 @@
 	import { page } from '$app/stores';
 	import { Icon } from 'sveltestrap';
 	import { getLanguageByCode } from '../../data/languages';
+	import { Random } from '../../data/random';
 
 	export let selfId: string;
 	export let addMessageListener: (listener: (id: string, message: string) => void) => void;
+	export let removeMessageListener: (listener: (id: string, message: string) => void) => void;
 	export let sendMessage: (message: unknown) => void;
 	export let playerNames: Record<string, string>;
+	export let room: string;
 
 	let words: WordPair[] = [];
 	let availableWords: WordPair[] = [];
@@ -19,8 +22,9 @@
 
 	const { lang } = $page.params;
 	const { code: langCode } = getLanguageByCode(lang);
+	const random = new Random(room);
 
-	const playerIds = Object.keys(playerNames).sort();
+	const playerIds = random.shuffle(Object.keys(playerNames).sort());
 	const secondsPerTurn = 90.49;
 	const secondsBetweenTurns = 10.49;
 
@@ -31,8 +35,10 @@
 	let isBetweenTurns = true;
 	let playerScores: Record<string, number> = {};
 
+	let timeouts = [];
+
 	function wait(seconds) {
-		return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+		return new Promise((resolve) => timeouts.push(setTimeout(resolve, seconds * 1000)));
 	}
 
 	async function startTurn() {
@@ -143,7 +149,9 @@
 	});
 
 	onDestroy(() => {
+		removeMessageListener(onMessage);
 		clearTimeout(tick);
+		timeouts.forEach((timeout) => clearTimeout(timeout));
 	});
 </script>
 

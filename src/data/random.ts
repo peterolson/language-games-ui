@@ -27,6 +27,15 @@ export class Random {
 	public index(max: number): number {
 		return Math.floor(this.random() * max);
 	}
+
+	public shuffle<T>(items: T[]): T[] {
+		const copy = items.slice();
+		for (let i = copy.length - 1; i > 0; i--) {
+			const j = Math.floor(this.random() * (i + 1));
+			[copy[i], copy[j]] = [copy[j], copy[i]];
+		}
+		return copy;
+	}
 }
 
 function xmur3(str: string) {

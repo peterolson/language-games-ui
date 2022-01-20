@@ -1,10 +1,13 @@
 <script lang="ts">
+	import type { LocalParticipant } from 'twilio-video';
+
 	import StreamView from './streamView.svelte';
 
 	export let playerNames: Record<string, string>;
 	export let remoteTracks: Record<string, MediaStreamTrack[]>;
 	export let selfId: string;
 	export let userTracks: MediaStreamTrack[];
+	export let localParticipant: LocalParticipant;
 
 	let screenWidth: number;
 	let screenHeight: number;
@@ -53,6 +56,7 @@
 				name={playerNames[selfId]}
 				hideText={videoWidth < 250}
 				isSelfVideo
+				{localParticipant}
 			/>
 		</div>
 		{#each Object.keys(remoteTracks || {}) as id}

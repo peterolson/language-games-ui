@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
 	import { Icon } from 'sveltestrap';
+	import type { LocalParticipant } from 'twilio-video';
 
 	export let name = '';
 	export let hideText = false;
 	export let tracks: MediaStreamTrack[];
 	export let isSelfVideo = false;
+	export let localParticipant: LocalParticipant = null;
 
 	let video: HTMLVideoElement;
 	let audio: HTMLAudioElement;
@@ -13,24 +15,49 @@
 	let cameraHidden = false;
 
 	$: {
-		tracks?.forEach((track) => {
-			if (track.kind === 'video') {
-				cameraHidden = !track.enabled;
-				if (video) {
-					video.srcObject = streamFromTrack(track);
-				}
-			}
-			if (track.kind === 'audio') {
-				muted = !track.enabled;
+		if (localParticipant) {
+			localParticipant.audioTracks.forEach((publication) => {
+				const track = publication.track;
+				muted = !track.isEnabled;
 				if (audio) {
-					audio.srcObject = streamFromTrack(track);
+					track.attach(audio);
 				}
-			}
-		});
+			});
+			localParticipant.videoTracks.forEach((publication) => {
+				const track = publication.track;
+				cameraHidden = !track.isEnabled;
+				if (video) {
+					track.attach(video);
+				}
+			});
+		} else {
+			tracks?.forEach((track) => {
+				if (track.kind === 'video') {
+					cameraHidden = !track.enabled;
+					if (video) {
+						video.srcObject = streamFromTrack(track);
+					}
+				}
+				if (track.kind === 'audio') {
+					muted = !track.enabled;
+					if (audio) {
+						audio.srcObject = streamFromTrack(track);
+					}
+				}
+			});
+		}
 	}
 
 	function toggleMute() {
 		muted = !muted;
+		if (localParticipant) {
+			localParticipant.audioTracks.forEach((publication) => {
+				const track = publication.track;
+				if (muted) track.disable();
+				else track.enable();
+			});
+			return;
+		}
 		tracks.forEach((track) => {
 			if (track.kind === 'audio') {
 				track.enabled = !muted;
@@ -40,11 +67,20 @@
 
 	function toggleHidden() {
 		cameraHidden = !cameraHidden;
+		if (localParticipant) {
+			localParticipant.videoTracks.forEach((publication) => {
+				const track = publication.track;
+				if (cameraHidden) track.disable();
+				else track.enable();
+			});
+			return;
+		}
 		tracks.forEach((track) => {
 			if (track.kind === 'video') {
 				track.enabled = !cameraHidden;
 			}
 		});
+		console.log(tracks);
 	}
 
 	function streamFromTrack(track: MediaStreamTrack) {

@@ -14,6 +14,8 @@
 	import Chat from './_chat.svelte';
 	import { games as gamesData } from '../../games';
 	import { locale } from 'svelte-i18n';
+	import type { LocalParticipant } from 'twilio-video';
+	import GameSelector from './simulate/_gameSelector.svelte';
 
 	const { lang } = $page.params;
 	const { code, name: languageName } = getLanguageByCode(lang);
@@ -26,8 +28,10 @@
 	let socket: Socket;
 	let userName: string;
 	let userTracks: MediaStreamTrack[];
+	let localParticipant: LocalParticipant;
 	let cleanup: () => void;
 	let addMessageListener: (listener: Listener) => void;
+	let removeMessageListener: (listener: Listener) => void;
 	let sendMessage: (message: unknown) => void;
 	let remoteTracks: Record<string, MediaStreamTrack[]>;
 	let playerNames: Record<string, string>;
@@ -36,9 +40,10 @@
 	let minPlayers: number;
 	let playerCount: number;
 	let unreadChatMessages: number = 0;
-	let selectedTab = 'game';
+	let selectedTab = 'chat';
 	let roomId: string;
 	let GameController;
+	let gamesPlayed = 0;
 
 	function lookForPlayers() {
 		lookingForPlayers = true;
@@ -74,7 +79,14 @@
 		minPlayers = args.minPlayers;
 		unreadChatMessages = 0;
 		roomId = room;
-		({ remoteTracks, cleanup, addMessageListener, sendMessage } = await connectToPeers(
+		({
+			remoteTracks,
+			cleanup,
+			addMessageListener,
+			removeMessageListener,
+			sendMessage,
+			localParticipant
+		} = await connectToPeers(
 			socket,
 			userTracks,
 			selfId,
@@ -88,8 +100,11 @@
 			}
 		));
 		addMessageListener((_id: string, message: any) => {
-			if (message?.type === 'chat' && selectedTab !== 'chat' && game !== 'chat') {
+			if (message?.type === 'chat' && selectedTab !== 'chat') {
 				unreadChatMessages++;
+			}
+			if (message?.type === 'set-game') {
+				setGame(message.key);
 			}
 		});
 	}
@@ -124,6 +139,21 @@
 			unreadChatMessages = 0;
 		}
 	};
+
+	function onChooseGame(newGame: string) {
+		sendMessage({
+			type: 'set-game',
+			key: newGame
+		});
+		setGame(newGame);
+	}
+
+	function setGame(newGame: string) {
+		gamesPlayed++;
+		selectedTab = newGame === 'chat' ? 'chat' : 'game';
+		GameController = gamesData.find((g) => g.key === newGame).Controller;
+		game = newGame;
+	}
 </script>
 
 <svelte:head>
@@ -148,7 +178,7 @@
 				</div>
 			</div>
 		{:else}
-			<PlayersView {remoteTracks} {playerNames} {selfId} {userTracks}>
+			<PlayersView {remoteTracks} {playerNames} {selfId} {userTracks} {localParticipant}>
 				{#if connectingToPeers}
 					<div class="waiting">
 						<p>{$_('game.connecting')}</p>
@@ -156,8 +186,8 @@
 					</div>
 				{:else if isConnected}
 					<div class="gameTabs">
-						{#if game !== 'chat'}
-							<ul class="nav nav-tabs">
+						<ul class="nav nav-tabs">
+							{#if game !== 'chat'}
 								<li class="nav-item">
 									<button
 										class="nav-link"
@@ -167,33 +197,49 @@
 										{$_(`${game}.name`)}
 									</button>
 								</li>
-								<li class="nav-item">
-									<button
-										class="nav-link"
-										class:active={selectedTab === 'chat'}
-										on:click={selectTab('chat')}
-									>
-										{$_('chat.name')}
-										{#if unreadChatMessages > 0}
-											<span class="badge badge-primary">{unreadChatMessages}</span>
-										{/if}
-									</button>
-								</li>
-							</ul>
-						{/if}
+							{/if}
+							<li class="nav-item">
+								<button
+									class="nav-link"
+									class:active={selectedTab === 'chat'}
+									on:click={selectTab('chat')}
+								>
+									{$_('chat.name')}
+									{#if unreadChatMessages > 0}
+										<span class="badge badge-primary">{unreadChatMessages}</span>
+									{/if}
+								</button>
+							</li>
+
+							<li class="nav-item">
+								<button
+									class="nav-link"
+									class:active={selectedTab === 'selectGame'}
+									on:click={selectTab('selectGame')}
+								>
+									{$_(`games`)}
+								</button>
+							</li>
+						</ul>
 						<div class="tabContent">
-							<div class:hidden={selectedTab !== 'chat' && game !== 'chat'}>
+							<div class:hidden={selectedTab !== 'chat'}>
 								<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
 							</div>
-							<div class:hidden={game === 'chat' || selectedTab !== 'game'}>
-								<svelte:component
-									this={GameController}
-									room={roomId}
-									{playerNames}
-									{selfId}
-									{addMessageListener}
-									{sendMessage}
-								/>
+							<div class:hidden={selectedTab !== 'game'}>
+								{#key GameController}
+									<svelte:component
+										this={GameController}
+										room={roomId + gamesPlayed}
+										{playerNames}
+										{selfId}
+										{addMessageListener}
+										{removeMessageListener}
+										{sendMessage}
+									/>
+								{/key}
+							</div>
+							<div class:hidden={selectedTab !== 'selectGame'}>
+								<GameSelector {onChooseGame} />
 							</div>
 						</div>
 					</div>

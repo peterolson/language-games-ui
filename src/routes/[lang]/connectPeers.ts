@@ -1,6 +1,7 @@
 import type { Socket } from 'socket.io-client';
 declare type TwilioVideo = typeof import('twilio-video');
 import type {
+	LocalParticipant,
 	RemoteAudioTrack,
 	RemoteParticipant,
 	RemoteTrack,
@@ -46,7 +47,9 @@ export async function connectToPeers(
 	remoteTracks: Record<string, MediaStreamTrack[]>;
 	cleanup: () => void;
 	addMessageListener: (listener: Listener) => void;
+	removeMessageListener: (listener: Listener) => void;
 	sendMessage: (message: unknown) => void;
+	localParticipant: LocalParticipant;
 }> {
 	const { token } = await fetch(
 		`/api/twilio-access-token.json?identity=${selfId}&room=${room}`
@@ -77,6 +80,7 @@ export async function connectToPeers(
 	twilioRoom.once('disconnected', function () {
 		console.log('You left the Room:', twilioRoom.name);
 	});
+	const localParticipant = twilioRoom.localParticipant;
 
 	const messageListeners: Listener[] = [];
 	socket.on('user:message:send', ({ id, message, timestamp }) => {
@@ -92,6 +96,7 @@ export async function connectToPeers(
 	});
 
 	return {
+		localParticipant,
 		remoteTracks,
 		cleanup: () => {
 			messageListeners.length = 0;
@@ -101,6 +106,9 @@ export async function connectToPeers(
 		},
 		addMessageListener: (listener) => {
 			messageListeners.push(listener);
+		},
+		removeMessageListener: (listener) => {
+			messageListeners.splice(messageListeners.indexOf(listener), 1);
 		},
 		sendMessage: (message) => {
 			socket.emit('user:message:send', { room, message });

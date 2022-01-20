@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import { Spinner } from 'sveltestrap';
 	import { Random } from '../../data/random';
@@ -7,11 +7,12 @@
 	export let selfId: string;
 	export let room: string;
 	export let addMessageListener: (listener: (id: string, message: string) => void) => void;
+	export let removeMessageListener: (listener: (id: string, message: string) => void) => void;
 	export let sendMessage: (message: unknown) => void;
 	export let playerNames: Record<string, string>;
 
 	const random = new Random(room);
-	const playerIds = Object.keys(playerNames).sort();
+	const playerIds = random.shuffle(Object.keys(playerNames).sort());
 
 	let imageURLS: string[] = [];
 	let chooserIndex = 0;
@@ -37,6 +38,9 @@
 	let playerGuesses: Record<string, number> = {};
 	let revealTimestamp: number;
 	let timeRemaining: number;
+
+	let timeouts = [];
+	let intervals = [];
 
 	const totalFaces = 12;
 	const resetTimeout = 10000;
@@ -92,6 +96,7 @@
 				clearInterval(interval);
 			}
 		}, 100);
+		intervals.push(interval);
 	}
 
 	function onMessage(id: string, message) {
@@ -109,10 +114,11 @@
 				sendMessage({ type: 'revealAnswer', playerGuesses, chosenFace });
 				currentPhase = 'revealing';
 				countdown();
-				setTimeout(() => {
+				const timeout = setTimeout(() => {
 					reset();
 					sendMessage({ type: 'reset' });
 				}, 10000);
+				timeouts.push(timeout);
 			}
 		}
 		if (message.type === 'revealAnswer') {
@@ -130,6 +136,14 @@
 	onMount(() => {
 		generateImages();
 		addMessageListener(onMessage);
+	});
+
+	onDestroy(() => {
+		removeMessageListener(onMessage);
+		timeouts.forEach((timeout) => clearTimeout(timeout));
+		intervals.forEach((interval) => clearInterval(interval));
+		timeouts = [];
+		intervals = [];
 	});
 </script>
 
