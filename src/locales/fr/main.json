@@ -4,7 +4,15 @@
     "send": "Envoyer"
   },
   "describe-picture": {
-    "name": "Décrire l'image"
+    "changePicture": "Changer l'image",
+    "done": "Finir",
+    "drawingBy": "Dessin de {0}",
+    "instructions-describe": "Decrivez l'image",
+    "instructions-describe-draw": "{1} décrira une image. \nEssayez de le dessiner.",
+    "instructions-describe-text": "{0} essaiera de dessiner l'image en fonction de votre description.",
+    "instructions-draw": "Dessiner",
+    "name": "Décrire l'image",
+    "original": "Image originale"
   },
   "error": {
     "noPermission": "Vous n'avez pas autorisé l'utilisation de la caméra et du microphone.",

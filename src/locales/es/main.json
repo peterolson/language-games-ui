@@ -4,7 +4,15 @@
     "send": "Enviar"
   },
   "describe-picture": {
-    "name": "Describir imagen"
+    "changePicture": "Cambiar imagen",
+    "done": "Terminar",
+    "drawingBy": "Dibujo por {0}",
+    "instructions-describe": "Describe la imagen",
+    "instructions-describe-draw": "{1} describirá una imagen. \nIntenta dibujarlo.",
+    "instructions-describe-text": "{0} intentará dibujar la imagen según su descripción.",
+    "instructions-draw": "Dibujar",
+    "name": "Describir imagen",
+    "original": "Imagen original"
   },
   "error": {
     "noPermission": "No dio permiso para usar la cámara y el micrófono.",

@@ -119,6 +119,7 @@
 	};
 
 	function onMessage(id: string, message) {
+		if (!(message?.type in messageHandlers)) return;
 		messageHandlers[message.type](id, message);
 	}
 

@@ -4,7 +4,15 @@
     "send": "לִשְׁלוֹחַ"
   },
   "describe-picture": {
-    "name": "תאר תמונה"
+    "changePicture": "לשנות תמונה",
+    "done": "סיים",
+    "drawingBy": "ציור מאת {0}",
+    "instructions-describe": "תאר את התמונה",
+    "instructions-describe-draw": "{1} יתאר תמונה. \nנסה לצייר את זה.",
+    "instructions-describe-text": "{0} ינסה לצייר את התמונה על סמך התיאור שלך.",
+    "instructions-draw": "לצייר",
+    "name": "תאר תמונה",
+    "original": "תמונה מקורית"
   },
   "error": {
     "noPermission": "לא נתת הרשאה להשתמש במצלמה ובמיקרופון.",

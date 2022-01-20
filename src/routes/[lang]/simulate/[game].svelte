@@ -36,6 +36,15 @@
 		};
 	};
 
+	const removeMessageListener = (player: Player) => {
+		return (listener) => {
+			const index = listenersByPlayer[player.id].indexOf(listener);
+			if (index !== -1) {
+				listenersByPlayer[player.id].splice(index, 1);
+			}
+		};
+	};
+
 	const sendMessage = (player: Player) => (message) => {
 		for (const p of players) {
 			if (p.id === player.id) {
@@ -52,13 +61,14 @@
 
 <div class="players" class:rtl={isRTL($locale)}>
 	{#each players as player}
-		<div>
+		<div class="bg-white border">
 			<svelte:component
 				this={GameController}
 				{room}
 				{playerNames}
 				selfId={player.id}
 				addMessageListener={addMessageListener(player)}
+				removeMessageListener={removeMessageListener(player)}
 				sendMessage={sendMessage(player)}
 			/>
 		</div>
