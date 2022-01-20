@@ -17,25 +17,23 @@
 		"@sveltejs/kit": "next",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
 		"@typescript-eslint/parser": "^4.31.1",
+		"dotenv": "^14.2.0",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^3.2.1",
+		"multilingual-game-words": "^1.2.1",
 		"prettier": "^2.4.1",
 		"prettier-plugin-svelte": "^2.4.0",
+		"socket.io-client": "^4.4.1",
 		"svelte": "^3.44.0",
 		"svelte-check": "^2.2.6",
+		"svelte-i18n": "^3.3.13",
 		"svelte-preprocess": "^4.9.4",
+		"sveltestrap": "^5.7.0",
 		"tslib": "^2.3.1",
+		"twilio": "^3.73.0",
+		"twilio-video": "^2.18.3",
 		"typescript": "^4.4.3"
 	},
-	"type": "module",
-	"dependencies": {
-		"dotenv": "^10.0.0",
-		"multilingual-game-words": "^1.1.0",
-		"socket.io-client": "^4.4.0",
-		"svelte-i18n": "^3.3.13",
-		"sveltestrap": "^5.6.3",
-		"twilio": "^3.72.0",
-		"twilio-video": "^2.18.2"
-	}
+	"type": "module"
 }
