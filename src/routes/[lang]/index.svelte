@@ -37,7 +37,6 @@
 	let playerNames: Record<string, string>;
 	let selfId: string;
 	let game: string;
-	let minPlayers: number;
 	let playerCount: number;
 	let unreadChatMessages: number = 0;
 	let selectedTab = 'chat';
@@ -60,7 +59,7 @@
 
 	function onDisconnected(id: string) {
 		playerCount--;
-		if (playerCount < minPlayers) {
+		if (playerCount < 2) {
 			cleanup();
 			isConnected = false;
 			connectingToPeers = false;
@@ -76,7 +75,6 @@
 		selfId = args.selfId;
 		game = args.game;
 		playerCount = args.playerCount;
-		minPlayers = args.minPlayers;
 		unreadChatMessages = 0;
 		roomId = room;
 		({
