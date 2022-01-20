@@ -42,7 +42,7 @@
 	let selectedTab = 'chat';
 	let roomId: string;
 	let GameController;
-	let gamesPlayed = 0;
+	let gameUniqueId = 0;
 
 	function lookForPlayers() {
 		lookingForPlayers = true;
@@ -102,6 +102,7 @@
 				unreadChatMessages++;
 			}
 			if (message?.type === 'set-game') {
+				gameUniqueId = message.gameUniqueId;
 				setGame(message.key);
 			}
 		});
@@ -139,15 +140,16 @@
 	};
 
 	function onChooseGame(newGame: string) {
+		gameUniqueId = +new Date();
 		sendMessage({
 			type: 'set-game',
-			key: newGame
+			key: newGame,
+			gameUniqueId
 		});
 		setGame(newGame);
 	}
 
 	function setGame(newGame: string) {
-		gamesPlayed++;
 		selectedTab = newGame === 'chat' ? 'chat' : 'game';
 		GameController = gamesData.find((g) => g.key === newGame).Controller;
 		game = newGame;
@@ -227,7 +229,7 @@
 								{#key GameController}
 									<svelte:component
 										this={GameController}
-										room={roomId + gamesPlayed}
+										room={roomId + gameUniqueId}
 										{playerNames}
 										{selfId}
 										{addMessageListener}
