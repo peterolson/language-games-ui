@@ -27,7 +27,7 @@
 	}
 </script>
 
-<div class="container">
+<div class="testAudio">
 	{#if isRecording}
 		<Spinner type="grow" color="danger" />&nbsp;&nbsp;{$_('media.testAudioRecording')}
 	{:else if isPlayingBack}
@@ -38,7 +38,7 @@
 </div>
 
 <style>
-	.container {
+	.testAudio {
 		padding: 0;
 		padding-top: 4px;
 		display: flex;

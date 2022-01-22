@@ -157,12 +157,16 @@
 </script>
 
 <svelte:head>
-	<title>{languageName} {$_('site.title')}</title>
+	<title>{languageName} - {$_('site.title')}</title>
 </svelte:head>
 
-<div class="container bg-white" class:rtl={isRTL($locale)}>
-	<nav>
-		<a href="/">{$_('home')}</a>
+<div class="page-container bg-white" class:rtl={isRTL($locale)}>
+	<nav class="bg-light px-2 border">
+		<a class="lead d-flex align-items-center" style="text-decoration:none; color:inherit" href="/">
+			<img src="/icon.svg" width="16" height="16" class="d-inline-block align-top" alt="" />
+			&nbsp;
+			{$_('site.title')} - {languageName}
+		</a>
 	</nav>
 	<div class="game">
 		{#if selectingMedia}
@@ -250,15 +254,12 @@
 </div>
 
 <style>
-	.container {
-		display: flex;
-		flex-direction: column;
+	.page-container {
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
 		height: 100%;
 		border: 1px solid #ccc;
-	}
-	nav {
-		display: flex;
-		padding: 0 8px;
+		position: relative;
 	}
 	.nav {
 		margin-bottom: 8px;
@@ -276,6 +277,7 @@
 	}
 	.game {
 		flex-grow: 1;
+		height: 100%;
 	}
 
 	.gameTabs {

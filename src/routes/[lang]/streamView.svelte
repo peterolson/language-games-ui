@@ -4,10 +4,10 @@
 	import type { LocalParticipant } from 'twilio-video';
 
 	export let name = '';
-	export let hideText = false;
 	export let tracks: MediaStreamTrack[];
 	export let isSelfVideo = false;
 	export let localParticipant: LocalParticipant = null;
+	export let soloView = false;
 
 	let video: HTMLVideoElement;
 	let audio: HTMLAudioElement;
@@ -93,7 +93,7 @@
 <div class="videoContainer">
 	<div class="mediaContainer">
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video playsinline autoplay bind:this={video} />
+		<video playsinline autoplay bind:this={video} class:solo-view={soloView} />
 		<audio autoplay bind:this={audio} muted={isSelfVideo} />
 	</div>
 	{#if name}
@@ -103,15 +103,15 @@
 		<div class="muteContainer">
 			<button class="btn btn-light" on:click={toggleMute}>
 				<Icon name={muted ? 'mic-fill' : 'mic-mute-fill'} />
-				{#if !hideText}
+				<span class="hide-text">
 					{muted ? $_('media.unmute') : $_('media.mute')}
-				{/if}
+				</span>
 			</button>
 			<button class="btn btn-light" on:click={toggleHidden}>
 				<Icon name={cameraHidden ? 'camera-video-fill' : 'camera-video-off-fill'} />
-				{#if !hideText}
+				<span class="hide-text">
 					{cameraHidden ? $_('media.showVideo') : $_('media.hideVideo')}
-				{/if}
+				</span>
 			</button>
 		</div>
 	{/if}
@@ -123,13 +123,17 @@
 		display: inline-block;
 		background-color: black;
 		line-height: 0;
-		width: 100%;
 		height: 100%;
+		width: 100%;
 	}
 
-	.mediaContainer,
-	.mediaContainer video {
+	.mediaContainer {
+		height: 100%;
 		width: 100%;
+		margin: auto;
+	}
+
+	.mediaContainer video {
 		height: 100%;
 		margin: auto;
 	}
@@ -162,5 +166,34 @@
 		height: 1.5em;
 		white-space: nowrap;
 		overflow: hidden;
+	}
+
+	video.solo-view {
+		width: 100%;
+		height: 100%;
+	}
+
+	@media (orientation: portrait) {
+		.mediaContainer video {
+			height: unset;
+			width: 100%;
+		}
+
+		video.solo-view {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	@media (max-width: 375px) {
+		.hide-text {
+			display: none;
+		}
+	}
+
+	@media (max-height: 350px) {
+		.hide-text {
+			display: none;
+		}
 	}
 </style>

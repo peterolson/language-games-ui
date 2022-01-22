@@ -6,6 +6,8 @@
 	import { Alert, Icon, FormGroup, Input, Label } from 'sveltestrap';
 	import { nameStore } from '../../data/stores';
 	import StreamView from './streamView.svelte';
+	import { getAccesToken, getTwilioVideo } from '../twilio';
+	import { getSocket } from '../../data/socket';
 
 	export let onSelectedMedia: (tracks: MediaStreamTrack[], name: string) => void;
 	export let onSetTracks: (tracks: MediaStreamTrack[]) => void;
@@ -92,25 +94,33 @@
 </script>
 
 <div class="container">
-	<form on:submit={onSubmit}>
-		<FormGroup>
-			<Label for="name">{$_('game.nameInput')}</Label>
-			<Input id="name" bind:value={$nameStore} required placeholder={$_('game.namePlaceholder')} />
-		</FormGroup>
-		<button class="btn btn-primary" type="submit" color="primary" disabled={!stream}>
-			{$_('game.userReady')}
-		</button>
-	</form>
-	<div>
+	<div class="area-a">
+		<form on:submit={onSubmit}>
+			<FormGroup>
+				<Label for="name">{$_('game.nameInput')}</Label>
+				<Input
+					id="name"
+					bind:value={$nameStore}
+					required
+					placeholder={$_('game.namePlaceholder')}
+				/>
+			</FormGroup>
+			<button class="btn btn-primary" type="submit" color="primary" disabled={!stream}>
+				{$_('game.userReady')}
+			</button>
+		</form>
+	</div>
+	<div class="area-b">
+		<div class="videoPreview">
+			<StreamView bind:tracks isSelfVideo soloView />
+		</div>
+	</div>
+	<div class="area-c">
 		{#if errorMessage}
 			<Alert color="danger">
 				{errorMessage}
 			</Alert>
 		{:else}
-			<div class="videoPreview">
-				<StreamView bind:tracks isSelfVideo />
-			</div>
-
 			<div class="inputs">
 				{#if microphones.length}
 					<div>
@@ -125,8 +135,6 @@
 						<TestAudio {stream} />
 					</div>
 				{/if}
-
-				<div>&nbsp;&nbsp;</div>
 				{#if cameras.length}
 					<div>
 						<label for="cameras">{$_('media.camera')}</label>
@@ -146,16 +154,47 @@
 
 <style>
 	.container {
-		margin: auto;
 		width: 100%;
+		height: 100%;
+		display: grid;
+		grid-template-rows: max-content minmax(0, 1fr) max-content;
+		grid-template-areas:
+			'a'
+			'b'
+			'c';
+	}
+
+	@media (max-height: 500px) {
+		.container {
+			grid-template-rows: minmax(0, 1fr) max-content;
+			grid-template-columns: max-content minmax(0, 1fr);
+			grid-template-areas:
+				'a b'
+				'. c';
+		}
+	}
+
+	.area-a {
+		grid-area: a;
+		justify-self: center;
+		align-self: center;
+		padding: 8px;
+	}
+	.area-b {
+		grid-area: b;
+		max-width: 640px;
+		justify-self: center;
+	}
+	.area-c {
+		grid-area: c;
+		justify-self: center;
 		max-width: 640px;
 		padding: 8px;
-		box-sizing: border-box;
-		text-align: center;
 	}
 
 	form {
-		padding-bottom: 16px;
+		max-width: 640px;
+		padding: 16px;
 	}
 
 	form button {
@@ -163,15 +202,27 @@
 	}
 
 	.videoPreview {
-		height: calc(100vh - 300px);
+		height: 100%;
+		width: 100%;
+		display: flex;
+		background-color: black;
+		justify-content: center;
+	}
+
+	select {
+		width: 100%;
+	}
+
+	label {
+		opacity: 0.8;
+		display: block;
 	}
 
 	.inputs {
 		display: flex;
-		justify-content: space-between;
+		max-width: 640px;
 	}
-
-	select {
+	.inputs div {
 		width: 100%;
 	}
 </style>

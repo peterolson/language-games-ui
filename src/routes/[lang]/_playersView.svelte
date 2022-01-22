@@ -8,62 +8,22 @@
 	export let selfId: string;
 	export let userTracks: MediaStreamTrack[];
 	export let localParticipant: LocalParticipant;
-
-	let screenWidth: number;
-	let screenHeight: number;
-	let videoWidth = 120;
-	let videoHeight = 90;
-	let aspectRatio = 4 / 3;
-	let isVertical = true;
-
-	$: {
-		let totalPlayers = Object.keys(playerNames).length;
-		const availableHeight = screenHeight - 24;
-		const minWidth = Math.min(screenWidth / 2, 180);
-		const minHeight = Math.min(availableHeight / 2, 135);
-
-		let horizontalVideoWidth = minWidth;
-		if (screenWidth / totalPlayers > minWidth) {
-			horizontalVideoWidth = screenWidth / totalPlayers;
-		}
-		const horizontalVideoHeight = horizontalVideoWidth / aspectRatio;
-
-		let verticalVideoHeight = minHeight;
-		if (availableHeight / totalPlayers > minHeight) {
-			verticalVideoHeight = availableHeight / totalPlayers;
-		}
-		const verticalVideoWidth = verticalVideoHeight * aspectRatio;
-
-		if (horizontalVideoWidth < verticalVideoWidth) {
-			isVertical = false;
-			videoWidth = horizontalVideoWidth;
-			videoHeight = horizontalVideoHeight;
-		} else {
-			isVertical = true;
-			videoWidth = verticalVideoWidth;
-			videoHeight = verticalVideoHeight;
-		}
-	}
 </script>
 
-<svelte:window bind:innerHeight={screenHeight} />
-
-<main bind:clientWidth={screenWidth} class:vertical={!isVertical}>
-	<div class="videoContainer" class:vertical={isVertical}>
-		<div style={`height:${videoHeight}px;width:${videoWidth}px`}>
-			<StreamView
-				tracks={userTracks}
-				name={playerNames[selfId]}
-				hideText={videoWidth < 250}
-				isSelfVideo
-				{localParticipant}
-			/>
+<main>
+	<div class="videoContainer">
+		<div>
+			<StreamView tracks={userTracks} name={playerNames[selfId]} isSelfVideo {localParticipant} />
 		</div>
-		{#each Object.keys(remoteTracks || {}) as id}
-			<div style={`height:${videoHeight}px;width:${videoWidth}px`}>
-				<StreamView tracks={remoteTracks[id]} name={playerNames[id]} hideText={videoWidth < 250} />
-			</div>
-		{/each}
+		<div>
+			{#each Object.keys(remoteTracks || {}) as id}
+				<StreamView tracks={remoteTracks[id]} name={playerNames[id]} />
+			{/each}
+		</div>
+		<!--
+		
+		
+		-->
 	</div>
 	<div class="gameContent">
 		<slot />
@@ -73,23 +33,41 @@
 <style>
 	main {
 		display: flex;
-		margin-left: -12px;
-		margin-right: -12px;
 		height: 100%;
+		width: 100%;
 	}
 	.videoContainer {
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-evenly;
-		background-color: black;
+		flex-flow: column nowrap;
+		flex: 0 1;
 	}
-	.vertical {
-		flex-direction: column;
+
+	.videoContainer div {
+		height: 50%;
+		max-width: 45vw;
+		overflow: hidden;
 	}
 
 	.gameContent {
-		flex-grow: 1;
+		flex: 1 0 auto;
 		padding: 8px;
 		box-sizing: border-box;
+	}
+
+	@media (orientation: portrait) {
+		main {
+			flex-direction: column;
+		}
+
+		.videoContainer {
+			flex-direction: row;
+		}
+
+		.videoContainer div {
+			height: unset;
+			width: 50%;
+			max-width: unset;
+			max-height: 45vh;
+		}
 	}
 </style>

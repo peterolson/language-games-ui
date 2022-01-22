@@ -1,5 +1,4 @@
 import type { Socket } from 'socket.io-client';
-declare type TwilioVideo = typeof import('twilio-video');
 import type {
 	LocalParticipant,
 	RemoteAudioTrack,
@@ -7,29 +6,7 @@ import type {
 	RemoteTrack,
 	RemoteVideoTrack
 } from 'twilio-video';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const Twilio: any;
-
-// https://sdk.twilio.com/js/video/releases/2.15.2/twilio-video.min.js
-
-let isTwilioImported = false;
-async function importTwilioScript() {
-	return new Promise<void>((resolve, reject) => {
-		if (isTwilioImported) {
-			resolve();
-			return;
-		}
-		const script = document.createElement('script');
-		script.src = '//sdk.twilio.com/js/video/releases/2.18.2/twilio-video.min.js';
-		script.onload = () => {
-			isTwilioImported = true;
-			resolve();
-		};
-		script.onerror = reject;
-		document.head.appendChild(script);
-	});
-}
+import { getAccesToken, getTwilioVideo } from '../twilio';
 
 export type Listener = (id: string, message: unknown, timestamp: number) => void;
 
@@ -51,13 +28,9 @@ export async function connectToPeers(
 	sendMessage: (message: unknown) => void;
 	localParticipant: LocalParticipant;
 }> {
-	const { token } = await fetch(
-		`/api/twilio-access-token.json?identity=${selfId}&room=${room}`
-	).then((res) => res.json());
-
+	const token = await getAccesToken(selfId, room);
 	const remoteTracks: Record<string, MediaStreamTrack[]> = {};
-	await importTwilioScript();
-	const Video: TwilioVideo = Twilio.Video;
+	const Video = await getTwilioVideo();
 	const twilioRoom = await Video.connect(token, { name: room, tracks });
 	twilioRoom.on('participantConnected', (participant) => {
 		console.log('Participant connected:', participant.identity);
