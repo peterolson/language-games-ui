@@ -237,7 +237,6 @@
 	}
 	.faces {
 		display: grid;
-		height: 100%;
 		grid-template-columns: repeat(auto-fit, minmax(max(150px, 25%), 1fr));
 	}
 	.faces div {
