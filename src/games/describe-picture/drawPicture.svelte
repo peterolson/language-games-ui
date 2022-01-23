@@ -78,7 +78,6 @@
 			stroke: simplifyLine(...lastStroke.stroke, 0.5)
 		};
 		onDrawStroke(strokes[strokes.length - 1]);
-		console.log(strokes);
 	}
 
 	function coords(e: MouseEvent): [number, number] {

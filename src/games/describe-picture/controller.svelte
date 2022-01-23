@@ -58,7 +58,6 @@
 		revealPicture: (_id, args) => {
 			strokes = args.strokes;
 			pictureIndex = args.pictureIndex;
-			console.log(args, strokes, pictureIndex);
 			isRevealed = true;
 		},
 		next: (_id, args) => {
@@ -153,7 +152,7 @@
 				<figcaption>{$_('describe-picture.original')}</figcaption>
 			</figure>
 			<figure>
-				<Drawing strokes={strokes.map((x) => x[1])} />
+				<Drawing {strokes} />
 				<figcaption>{$_('describe-picture.drawingBy', translationValues)}</figcaption>
 			</figure>
 		</div>
