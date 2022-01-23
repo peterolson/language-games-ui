@@ -72,8 +72,9 @@
   },
   "taboo": {
     "name": "Explica la palabra",
-    "nextRound": "La próxima ronda comienza en {0} ...",
+    "nextRound": "Proxima ronda",
     "nextWord": "Palabra siguiente",
-    "skip": "Saltar"
+    "skip": "Saltar",
+    "waitForExplanation": "{0} intentará describirte una palabra."
   }
 }

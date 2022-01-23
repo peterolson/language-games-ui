@@ -72,8 +72,9 @@
   },
   "taboo": {
     "name": "解釋這個詞",
-    "nextRound": "下一輪開始於{0}...",
+    "nextRound": "下一輪",
     "nextWord": "下一個詞",
-    "skip": "跳過"
+    "skip": "跳過",
+    "waitForExplanation": "{0} 將嘗試向您描述一個詞。"
   }
 }

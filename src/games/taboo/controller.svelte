@@ -26,7 +26,6 @@
 
 	const playerIds = random.shuffle(Object.keys(playerNames).sort());
 	const secondsPerTurn = 90.49;
-	const secondsBetweenTurns = 10.49;
 
 	let currentPlayerIndex = 0;
 	let currentWordIndex;
@@ -41,17 +40,19 @@
 		return new Promise((resolve) => timeouts.push(setTimeout(resolve, seconds * 1000)));
 	}
 
-	async function startTurn() {
+	async function betweenTurns() {
 		turnStartedTimestamp = Date.now();
 		isBetweenTurns = true;
-		sendMessage({ type: 'betweenTurns', timestamp: turnStartedTimestamp });
-		await wait(secondsBetweenTurns);
+		sendMessage({ type: 'betweenTurns' });
+	}
+
+	async function startTurn() {
 		finishedWords = [];
 		missedWord = null;
 		isBetweenTurns = false;
 		skip();
 		turnStartedTimestamp = Date.now();
-		sendMessage({ type: 'startTurn', timestamp: turnStartedTimestamp });
+		sendMessage({ type: 'startTurn' });
 		await wait(secondsPerTurn);
 		currentPlayerIndex = (currentPlayerIndex + 1) % playerIds.length;
 		missedWord = availableWords[currentWordIndex];
@@ -91,22 +92,22 @@
 	}
 
 	const messageHandlers = {
-		startTurn: (_id, { timestamp }) => {
-			turnStartedTimestamp = timestamp;
+		startTurn: (_id) => {
+			turnStartedTimestamp = Date.now();
 			isBetweenTurns = false;
 			missedWord = null;
 			finishedWords = [];
 		},
-		betweenTurns: (_id, { timestamp }) => {
+		betweenTurns: (_id) => {
 			isBetweenTurns = true;
-			turnStartedTimestamp = timestamp;
+			turnStartedTimestamp = Date.now();
 		},
 		nextPlayer: (_id, { playerIndex, lastWord }) => {
 			missedWord = lastWord;
 			currentPlayerIndex = playerIndex;
 			removeWord(lastWord);
 			if (selfId === playerIds[currentPlayerIndex]) {
-				startTurn();
+				betweenTurns();
 			}
 		},
 		nextWord: (id, { word }) => {
@@ -157,7 +158,7 @@
 </script>
 
 <div class="container">
-	<div class="players">
+	<div class="players mb-2">
 		{#each playerIds as playerId}
 			<div class="player" class:currentPlayer={playerId === playerIds[currentPlayerIndex]}>
 				<div class="player-name">
@@ -170,18 +171,9 @@
 
 	{#if turnStartedTimestamp && currentTimestamp}
 		{#if isBetweenTurns}
-			<h2>
-				{$_('taboo.nextRound', {
-					values: {
-						0: Math.max(
-							0,
-							Math.round(
-								(turnStartedTimestamp + secondsBetweenTurns * 1000 - currentTimestamp) / 1000
-							)
-						)
-					}
-				})}
-			</h2>
+			{#if playerIds[currentPlayerIndex] === selfId}
+				<button class="btn btn-primary" on:click={startTurn}>{$_('taboo.nextRound')}</button>
+			{/if}
 		{:else}
 			<h2>{formatTimeRemaining(currentTimestamp, turnStartedTimestamp)}</h2>
 		{/if}
@@ -196,6 +188,14 @@
 			{/if}
 			<button class="btn btn-secondary" on:click={skip}>{$_('taboo.skip')}</button>
 			<button class="btn btn-primary" on:click={nextWord}>{$_('taboo.nextWord')}</button>
+		</div>
+	{/if}
+
+	{#if !isBetweenTurns && playerIds[currentPlayerIndex] !== selfId && !finishedWords.length}
+		<div class="text-center alert alert-info">
+			{$_('taboo.waitForExplanation', {
+				values: { 0: playerNames[playerIds[currentPlayerIndex]] }
+			})}
 		</div>
 	{/if}
 

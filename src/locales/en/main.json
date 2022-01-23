@@ -72,8 +72,9 @@
   },
   "taboo": {
     "name": "Explain the word",
-    "nextRound": "Next round starts in {0}...",
+    "nextRound": "Next round",
     "nextWord": "Next word",
-    "skip": "Skip"
+    "skip": "Skip",
+    "waitForExplanation": "{0} will try to describe a word to you."
   }
 }
