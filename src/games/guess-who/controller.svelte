@@ -147,7 +147,7 @@
 	});
 </script>
 
-<div class="container">
+<div class="game-container">
 	{#if currentPhase === 'revealing'}
 		<h4 class="center">{$_('guess-who.time-to-reset', { values: { 0: timeRemaining } })}</h4>
 		<div class="reveal center">
@@ -169,7 +169,7 @@
 		</div>
 	{:else}
 		<div class="instructions alert alert-info">
-			<h4 class="alert-heading">
+			<h4 class="alert-heading text-center">
 				{#if currentPhase === 'choosing'}
 					{#if isChooser}
 						{$_('guess-who.choose')}
@@ -185,22 +185,29 @@
 					{/if}
 				{/if}
 			</h4>
-			{#if currentPhase === 'choosing'}
-				{#if isChooser}
-					{$_('guess-who.choose-instructions')}
-				{:else}
-					{$_('guess-who.wait-instructions', translationValues)}
-				{/if}
-			{/if}
-			{#if currentPhase === 'guessing'}
-				{#if isChooser}
-					{$_('guess-who.guessing-answer-instructions', translationValues)}
-				{:else}
-					{$_('guess-who.guessing-ask-instructions', translationValues)}<br />
-					{$_('guess-who.guessing-ask-instructions-footer')}
-				{/if}
-			{/if}
 		</div>
+
+		{#if !(currentPhase === 'choosing' && !isChooser)}
+			<div class="faces">
+				{#each imageURLS as image, i}
+					<div>
+						<img
+							src={image}
+							alt="Random face"
+							on:click={() => clickFace(i)}
+							class:chosen={i === chosenFace}
+							class:eliminated={eliminatedFaces.has(i)}
+							width={256}
+							height={256}
+						/>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<div class="center p-2">
+				<Spinner color="primary" />
+			</div>
+		{/if}
 
 		<div class="actions">
 			{#if currentPhase === 'choosing' && isChooser}
@@ -209,31 +216,11 @@
 				</button>
 			{/if}
 		</div>
-
-		{#if !(currentPhase === 'choosing' && !isChooser)}
-			<div class="faces">
-				{#each imageURLS as image, i}
-					<img
-						src={image}
-						alt="Random face"
-						on:click={() => clickFace(i)}
-						class:chosen={i === chosenFace}
-						class:eliminated={eliminatedFaces.has(i)}
-						width={256}
-						height={256}
-					/>
-				{/each}
-			</div>
-		{:else}
-			<div class="center">
-				<Spinner color="primary" />
-			</div>
-		{/if}
 	{/if}
 </div>
 
 <style>
-	.container {
+	.game-container {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -249,26 +236,19 @@
 		flex-grow: 1;
 	}
 	.faces {
-		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		flex-grow: 1;
+		display: grid;
 		height: 100%;
+		grid-template-columns: repeat(auto-fit, minmax(max(150px, 25%), 1fr));
+	}
+	.faces div {
+		max-width: 256px;
 	}
 	.faces img {
-		width: 33%;
+		width: 100%;
 		height: auto;
-		max-width: 256px;
 		border: 5px solid transparent;
 		cursor: pointer;
-		object-fit: contain;
 		opacity: 1;
-	}
-
-	@media (min-width: 768px) {
-		.faces img {
-			width: 25%;
-		}
 	}
 
 	.faces img:hover {
@@ -295,6 +275,7 @@
 
 	.reveal img {
 		width: 100%;
+		max-width: 256px;
 		height: auto;
 		border: 5px solid transparent;
 	}

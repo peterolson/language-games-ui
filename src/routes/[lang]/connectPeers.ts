@@ -57,7 +57,6 @@ export async function connectToPeers(
 
 	const messageListeners: Listener[] = [];
 	socket.on('user:message:send', ({ id, message, timestamp }) => {
-		console.log('Received message from user:', id, message, timestamp);
 		for (const listener of messageListeners) {
 			listener(id, message, timestamp);
 		}

@@ -161,13 +161,6 @@
 </svelte:head>
 
 <div class="page-container bg-white" class:rtl={isRTL($locale)}>
-	<nav class="bg-light px-2 border">
-		<a class="lead d-flex align-items-center" style="text-decoration:none; color:inherit" href="/">
-			<img src="/icon.svg" width="16" height="16" class="d-inline-block align-top" alt="" />
-			&nbsp;
-			{$_('site.title')} - {languageName}
-		</a>
-	</nav>
 	<div class="game">
 		{#if selectingMedia}
 			<UserMedia {onSelectedMedia} onSetTracks={(tracks) => (userTracks = tracks)} />
@@ -256,9 +249,8 @@
 <style>
 	.page-container {
 		display: grid;
-		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-rows: minmax(0, 1fr);
 		height: 100%;
-		border: 1px solid #ccc;
 		position: relative;
 	}
 	.nav {
