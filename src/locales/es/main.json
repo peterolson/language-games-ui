@@ -5,6 +5,7 @@
   },
   "describe-picture": {
     "changePicture": "Cambiar imagen",
+    "clear": "Limpiar",
     "done": "Terminar",
     "drawingBy": "Dibujo por {0}",
     "instructions-describe": "Describe la imagen",
@@ -12,7 +13,8 @@
     "instructions-describe-text": "{0} intentará dibujar la imagen según su descripción.",
     "instructions-draw": "Dibujar",
     "name": "Describir imagen",
-    "original": "Imagen original"
+    "original": "Imagen original",
+    "undo": "Deshacer"
   },
   "error": {
     "noPermission": "No dio permiso para usar la cámara y el micrófono.",

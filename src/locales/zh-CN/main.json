@@ -5,6 +5,7 @@
   },
   "describe-picture": {
     "changePicture": "更换图片",
+    "clear": "清除",
     "done": "结束",
     "drawingBy": "{0} 绘制",
     "instructions-describe": "描述这张图片",
@@ -12,7 +13,8 @@
     "instructions-describe-text": "{0} 将尝试根据您的描述绘制图片。",
     "instructions-draw": "画",
     "name": "描述图片",
-    "original": "原图"
+    "original": "原图",
+    "undo": "撤消"
   },
   "error": {
     "noPermission": "您没有授予使用摄像头和麦克风的权限。",

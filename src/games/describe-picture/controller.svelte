@@ -3,7 +3,7 @@
 	import DrawPicture from './drawPicture.svelte';
 	import { Random } from '../../data/random';
 	import { onDestroy, onMount } from 'svelte';
-	import type { Stroke } from './drawing.types';
+	import type { StrokeData } from './drawing.types';
 	import { _ } from 'svelte-i18n';
 	import { Button } from 'sveltestrap';
 
@@ -22,7 +22,7 @@
 	let pictureIndex: number;
 	let translationValues: { values: Record<string, string> };
 
-	let strokes: Stroke[] = [];
+	let strokes: StrokeData[] = [];
 	let pictureKey = 0;
 
 	let isRevealed = false;
@@ -45,6 +45,9 @@
 		drawStroke: (_id, { stroke }) => {
 			strokes.push(stroke);
 			strokes = strokes;
+		},
+		removeStroke: (_id, { stroke }) => {
+			strokes = strokes.filter((x) => x.id !== stroke.id);
 		},
 		clearStrokes: () => {
 			strokes = [];
@@ -85,9 +88,16 @@
 		removeMessageListener(onMessage);
 	});
 
-	function onDrawStroke(stroke: Stroke) {
+	function onDrawStroke(stroke: StrokeData) {
 		sendMessage({
 			type: 'drawStroke',
+			stroke
+		});
+	}
+
+	function onRemoveStroke(stroke: StrokeData) {
+		sendMessage({
+			type: 'removeStroke',
 			stroke
 		});
 	}
@@ -143,30 +153,22 @@
 				<figcaption>{$_('describe-picture.original')}</figcaption>
 			</figure>
 			<figure>
-				<Drawing {strokes} />
+				<Drawing strokes={strokes.map((x) => x[1])} />
 				<figcaption>{$_('describe-picture.drawingBy', translationValues)}</figcaption>
 			</figure>
 		</div>
 	{:else if isDrawer}
-		<div class="alert alert-info">
-			<h4 class="alert-heading">{$_('describe-picture.instructions-draw')}</h4>
-			{$_('describe-picture.instructions-describe-draw', translationValues)}
-		</div>
 		<div class="drawpad">
 			{#key pictureKey}
-				<DrawPicture {onDrawStroke} {onClearStrokes} />
+				<DrawPicture {onDrawStroke} {onClearStrokes} {onRemoveStroke} />
 			{/key}
 		</div>
 	{:else}
 		<div class="alert alert-info">
-			<h4 class="alert-heading">{$_('describe-picture.instructions-describe')}</h4>
-			{$_('describe-picture.instructions-describe-text', translationValues)}
+			<h4 class="alert-heading text-center">{$_('describe-picture.instructions-describe')}</h4>
 		</div>
-		<button class="btn btn-secondary m-1" on:click={changePicture}
-			>{$_('describe-picture.changePicture')}</button
-		>
 		<button
-			class="btn btn-primary m-1"
+			class="btn btn-primary m-2"
 			color="primary"
 			disabled={!strokes.length}
 			on:click={revealPicture}
@@ -175,12 +177,17 @@
 		</button>
 		<div class="d-flex justify-content-around align-items-center flex-wrap">
 			{#if pictureIndex !== undefined}
-				<img
-					width="200"
-					height="200"
-					src={`https://s3.us-east-2.amazonaws.com/data.languagegam.es/doodles/${pictureIndex}.png`}
-					alt=""
-				/>
+				<div class="d-flex flex-column">
+					<img
+						width="200"
+						height="200"
+						src={`https://s3.us-east-2.amazonaws.com/data.languagegam.es/doodles/${pictureIndex}.png`}
+						alt=""
+					/>
+					<button class="btn btn-secondary m-2" on:click={changePicture}>
+						{$_('describe-picture.changePicture')}
+					</button>
+				</div>
 			{/if}
 			<Drawing {strokes} />
 		</div>

@@ -5,6 +5,7 @@
   },
   "describe-picture": {
     "changePicture": "לשנות תמונה",
+    "clear": "לנקות",
     "done": "סיים",
     "drawingBy": "ציור מאת {0}",
     "instructions-describe": "תאר את התמונה",
@@ -12,7 +13,8 @@
     "instructions-describe-text": "{0} ינסה לצייר את התמונה על סמך התיאור שלך.",
     "instructions-draw": "לצייר",
     "name": "תאר תמונה",
-    "original": "תמונה מקורית"
+    "original": "תמונה מקורית",
+    "undo": "לבטל"
   },
   "error": {
     "noPermission": "לא נתת הרשאה להשתמש במצלמה ובמיקרופון.",

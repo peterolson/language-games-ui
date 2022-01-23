@@ -1,50 +1,64 @@
 <script lang="ts">
 	import { onDestroy, tick } from 'svelte';
+	import { _ } from 'svelte-i18n';
+	import { Icon } from 'sveltestrap';
 
-	import type { Stroke } from './drawing.types';
+	import type { Stroke, StrokeData, Tool } from './drawing.types';
+	import { getPath, getStrokeColor, getStrokeWidth } from './drawing.util';
 
 	import { simplifyLine } from './simplify';
 
-	export let onDrawStroke: (stroke: Stroke) => void;
+	export let onDrawStroke: (stroke: StrokeData) => void;
 	export let onClearStrokes: () => void;
+	export let onRemoveStroke: (stroke: StrokeData) => void;
 
-	let strokes: Stroke[] = [];
+	let strokes: StrokeData[] = [];
 
 	const WIDTH = 256;
 
-	function getPath([xs, ys]: Stroke) {
-		const d = [`M ${xs[0]} ${ys[0]}`];
-		for (let i = 1; i < xs.length; i++) {
-			d.push(`L ${xs[i]} ${ys[i]}`);
-		}
-		return d.join(' ');
-	}
-
 	let isDrawing = false;
 	let interval;
+	let activeTool: Tool = 'pencil';
+
+	function getId() {
+		return +new Date() + '_' + Math.floor(Math.random() * 100000);
+	}
 
 	function onTick() {
-		strokes[strokes.length - 1] = simplifyLine(...strokes[strokes.length - 1], 0.5);
+		const lastStroke = strokes[strokes.length - 1];
+		strokes[strokes.length - 1] = {
+			...lastStroke,
+			stroke: simplifyLine(...lastStroke.stroke, 0.5)
+		};
 		onDrawStroke(strokes[strokes.length - 1]);
-		let x = strokes[strokes.length - 1][0].slice(-1)[0];
-		let y = strokes[strokes.length - 1][1].slice(-1)[0];
-		strokes.push([[x], [y]]);
+		const { stroke: oldStroke } = strokes[strokes.length - 1];
+		let x = oldStroke[0].slice(-1)[0];
+		let y = oldStroke[1].slice(-1)[0];
+		strokes.push({
+			id: getId(),
+			stroke: [[x], [y]],
+			type: activeTool
+		});
 		strokes = strokes;
 	}
 
 	function startStroke(x: number, y: number) {
 		isDrawing = true;
-		strokes.push([[x], [y]]);
+		strokes.push({
+			id: getId(),
+			stroke: [[x], [y]],
+			type: activeTool
+		});
 		strokes = strokes;
-		interval = setInterval(onTick, 250);
+		interval = setInterval(onTick, 500);
 	}
 
 	function midStroke(x: number, y: number) {
 		if (!isDrawing) {
 			return;
 		}
-		strokes[strokes.length - 1][0].push(x);
-		strokes[strokes.length - 1][1].push(y);
+		strokes[strokes.length - 1].stroke[0].push(x);
+		strokes[strokes.length - 1].stroke[1].push(y);
 		strokes[strokes.length - 1] = strokes[strokes.length - 1];
 	}
 
@@ -54,12 +68,17 @@
 			return;
 		}
 		if (x !== undefined && y !== undefined) {
-			strokes[strokes.length - 1][0].push(x);
-			strokes[strokes.length - 1][1].push(y);
+			strokes[strokes.length - 1].stroke[0].push(x);
+			strokes[strokes.length - 1].stroke[1].push(y);
 		}
 		isDrawing = false;
-		strokes[strokes.length - 1] = simplifyLine(...strokes[strokes.length - 1], 0.5);
+		const lastStroke = strokes[strokes.length - 1];
+		strokes[strokes.length - 1] = {
+			...lastStroke,
+			stroke: simplifyLine(...lastStroke.stroke, 0.5)
+		};
 		onDrawStroke(strokes[strokes.length - 1]);
+		console.log(strokes);
 	}
 
 	function coords(e: MouseEvent): [number, number] {
@@ -110,6 +129,14 @@
 	function clear() {
 		strokes = [];
 		onClearStrokes();
+		activeTool = 'pencil';
+	}
+
+	function undo() {
+		if (!strokes.length) return;
+		const lastStroke = strokes.pop();
+		onRemoveStroke(lastStroke);
+		strokes = strokes;
 	}
 
 	onDestroy(() => {
@@ -119,43 +146,68 @@
 
 <div class="drawingBoard">
 	<div class="controls">
-		<button class="btn btn-primary" on:click={clear}>Clear</button>
+		<button
+			class="btn"
+			class:btn-outline-primary={activeTool === 'pencil'}
+			on:click={() => (activeTool = 'pencil')}
+		>
+			<Icon name="pencil" />
+		</button>
+		<button
+			class="btn"
+			class:btn-outline-primary={activeTool === 'eraser'}
+			on:click={() => (activeTool = 'eraser')}
+		>
+			<Icon name="eraser" />
+		</button>
+		<button class="btn btn-outline-secondary" on:click={undo}>
+			{$_('describe-picture.undo')}
+		</button>
+		<button class="btn btn-outline-secondary" on:click={clear}>
+			{$_('describe-picture.clear')}
+		</button>
 	</div>
-	<svg
-		viewBox={`0 0 ${WIDTH} ${WIDTH}`}
-		xmlns="http://www.w3.org/2000/svg"
-		on:mousedown={mouseDown}
-		on:mousemove={mouseMove}
-		on:mouseup={mouseUp}
-		on:mouseleave={mouseUp}
-		on:touchstart={touchstart}
-		on:touchmove={touchmove}
-		on:touchend={touchend}
-	>
-		{#each strokes as stroke}
-			<path d={getPath(stroke)} stroke="black" fill="none" stroke-width="4" />
-		{/each}
-	</svg>
+	<div class="canvas">
+		<svg
+			viewBox={`0 0 ${WIDTH} ${WIDTH}`}
+			xmlns="http://www.w3.org/2000/svg"
+			on:mousedown={mouseDown}
+			on:mousemove={mouseMove}
+			on:mouseup={mouseUp}
+			on:mouseleave={mouseUp}
+			on:touchstart={touchstart}
+			on:touchmove={touchmove}
+			on:touchend={touchend}
+		>
+			{#each strokes as { stroke, id, type }}
+				<path
+					d={getPath(stroke)}
+					stroke={getStrokeColor(type)}
+					fill="none"
+					stroke-width={getStrokeWidth(type)}
+					stroke-linecap="round"
+				/>
+			{/each}
+		</svg>
+	</div>
 </div>
 
 <style>
 	.drawingBoard {
-		border: 1px solid black;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.controls {
+		padding: 8px;
+	}
+	.canvas {
+		flex: 1;
 		max-width: 100%;
 		max-height: 100%;
 		aspect-ratio: 1;
-		box-sizing: border-box;
-		position: relative;
-		margin: auto;
-	}
-	svg {
-		width: 100%;
-		height: 100%;
-	}
-	.controls {
-		position: absolute;
-		top: 0;
-		right: 0;
-		padding: 4px;
+		border: 1px solid black;
 	}
 </style>

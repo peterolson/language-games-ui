@@ -5,6 +5,7 @@
   },
   "describe-picture": {
     "changePicture": "Change picture",
+    "clear": "Clear",
     "done": "Finish",
     "drawingBy": "Drawing by {0}",
     "instructions-describe": "Describe the picture",
@@ -12,7 +13,8 @@
     "instructions-describe-text": "{0} will try to draw the picture based on your description.",
     "instructions-draw": "Draw",
     "name": "Describe the picture",
-    "original": "Original picture"
+    "original": "Original picture",
+    "undo": "Undo"
   },
   "error": {
     "noPermission": "You did not give permission to use the camera and microphone.",
