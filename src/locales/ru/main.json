@@ -23,8 +23,11 @@
   "game": {
     "chat": "Чат",
     "connecting": "Подключение к другим игрокам ...",
+    "link": "Ссылка",
     "nameInput": "Какое у тебя имя?",
     "namePlaceholder": "Джон Смит",
+    "roomFull": "Эта комната уже заполнена.",
+    "roomNumber": "Номер комнаты",
     "userReady": "Я готов",
     "waiting": "Жду игроков ..."
   },
@@ -59,7 +62,23 @@
     "testAudioRecording": "Скажите что-то",
     "unmute": "Включить звук"
   },
+  "navigate": {
+    "back": "Назад",
+    "next": "Следующий"
+  },
   "play": "Играть в",
+  "roomType": {
+    "alreadyConnected": "Уже подключено",
+    "alreadyConnectedHint": "Мы уже можем видеть или слышать друг друга.",
+    "connectVideo": "Подключиться к аудио/видео",
+    "connectVideoHint": "Включить сюда аудио и видео",
+    "connectVideoMax": "(максимум 2 игрока)",
+    "privateRoom": "Приватная комната",
+    "privateRoomHint": "Отправьте ссылку своим друзьям",
+    "publicRoom": "Общественная комната",
+    "publicRoomHint": "Поговорите со всеми, кто в сети",
+    "roomCode": "Используйте код комнаты"
+  },
   "site": {
     "description": "Практикуйтесь в разговорной игре с реальными людьми",
     "interfaceLanguagePrompt": "Я говорю",

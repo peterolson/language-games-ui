@@ -15,10 +15,10 @@ export async function connectToPeers(
 	tracks: MediaStreamTrack[],
 	selfId: string,
 	peerIds: string[],
-	playerNames: Record<string, string>,
+	useVideo: boolean,
 	room: string,
 	onAllConnected: () => void,
-	onDisconnected: (id: string) => void,
+	onDisconnected: (arg: { id: string; playerIds: string[] }) => void,
 	onTrackSubscribed: (remoteTracks: Record<string, MediaStreamTrack[]>) => void
 ): Promise<{
 	remoteTracks: Record<string, MediaStreamTrack[]>;
@@ -28,32 +28,36 @@ export async function connectToPeers(
 	sendMessage: (message: unknown) => void;
 	localParticipant: LocalParticipant;
 }> {
-	const token = await getAccesToken(selfId, room);
 	const remoteTracks: Record<string, MediaStreamTrack[]> = {};
-	const Video = await getTwilioVideo();
-	const twilioRoom = await Video.connect(token, { name: room, tracks });
-	twilioRoom.on('participantConnected', (participant) => {
-		console.log('Participant connected:', participant.identity);
-		console.log(participant);
-	});
-	twilioRoom.on('trackSubscribed', (track, _, participant) => {
-		console.log('Track Subscribed:', track.kind, participant.identity);
-		const id = participant.identity;
-		remoteTracks[id] = remoteTracks[id] || [];
-		attachAttachableTracksForRemoteParticipant(remoteTracks[id], participant);
-		onTrackSubscribed(remoteTracks);
-		if (Object.keys(remoteTracks).length === peerIds.length) {
-			onAllConnected();
-		}
-	});
-	twilioRoom.on('participantDisconnected', (participant) => {
-		console.log('Participant disconnected:', participant.identity);
-		onDisconnected(participant.identity);
-	});
-	twilioRoom.once('disconnected', function () {
-		console.log('You left the Room:', twilioRoom.name);
-	});
-	const localParticipant = twilioRoom.localParticipant;
+	let localParticipant = null;
+	let twilioRoom = null;
+	if (useVideo) {
+		const token = await getAccesToken(selfId, room);
+		const Video = await getTwilioVideo();
+		twilioRoom = await Video.connect(token, { name: room, tracks });
+		twilioRoom.on('participantConnected', (participant) => {
+			console.log('Participant connected:', participant.identity);
+			console.log(participant);
+		});
+		twilioRoom.on('trackSubscribed', (track, _, participant) => {
+			console.log('Track Subscribed:', track.kind, participant.identity);
+			const id = participant.identity;
+			remoteTracks[id] = remoteTracks[id] || [];
+			attachAttachableTracksForRemoteParticipant(remoteTracks[id], participant);
+			onTrackSubscribed(remoteTracks);
+			if (Object.keys(remoteTracks).length === peerIds.length) {
+				onAllConnected();
+			}
+		});
+		twilioRoom.on('participantDisconnected', (participant) => {
+			console.log('Participant disconnected:', participant.identity);
+			onDisconnected(participant.identity);
+		});
+		twilioRoom.once('disconnected', function () {
+			console.log('You left the Room:', twilioRoom.name);
+		});
+		localParticipant = twilioRoom.localParticipant;
+	}
 
 	const messageListeners: Listener[] = [];
 	socket.on('user:message:send', ({ id, message, timestamp }) => {
@@ -72,7 +76,7 @@ export async function connectToPeers(
 		remoteTracks,
 		cleanup: () => {
 			messageListeners.length = 0;
-			twilioRoom.disconnect();
+			twilioRoom?.disconnect();
 			socket.emit('user:leave', room);
 			socket.removeAllListeners('user:leave');
 		},

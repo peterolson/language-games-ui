@@ -25,8 +25,11 @@
   "game": {
     "chat": "Chat",
     "connecting": "Conectando con otros jugadores ...",
+    "link": "Enlace",
     "nameInput": "¿Cuál es tu nombre?",
     "namePlaceholder": "Juan Garcia",
+    "roomFull": "Esta sala ya está llena.",
+    "roomNumber": "Número de habitación",
     "userReady": "Estoy listo",
     "waiting": "Esperando jugadores ..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "Di algo",
     "unmute": "Activar sonido"
   },
+  "navigate": {
+    "back": "Atrás",
+    "next": "Siguente"
+  },
   "play": "Jugar",
+  "roomType": {
+    "alreadyConnected": "Ya conectado",
+    "alreadyConnectedHint": "Ya podemos vernos o escucharnos.",
+    "connectVideo": "Conectar a audio/video",
+    "connectVideoHint": "Incluir audio y video aquí",
+    "connectVideoMax": "(máximo 2 jugadores)",
+    "privateRoom": "Habitación privada",
+    "privateRoomHint": "Envía un enlace a tus amigos",
+    "publicRoom": "Sala pública",
+    "publicRoomHint": "Habla con cualquier persona que esté en línea",
+    "roomCode": "Usar código de habitación"
+  },
   "site": {
     "description": "Practica hablar a través de juegos con personas reales.",
     "interfaceLanguagePrompt": "Yo hablo",

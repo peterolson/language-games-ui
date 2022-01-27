@@ -25,8 +25,11 @@
   "game": {
     "chat": "聊天",
     "connecting": "連接到其他玩家...",
+    "link": "關聯",
     "nameInput": "你叫什麼名字？",
     "namePlaceholder": "陳大文",
+    "roomFull": "這個房間已經滿了。",
+    "roomNumber": "房間號",
     "userReady": "我準備好了",
     "waiting": "等待玩家..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "說些什麼",
     "unmute": "取消靜音"
   },
+  "navigate": {
+    "back": "後退",
+    "next": "下一步"
+  },
   "play": "玩",
+  "roomType": {
+    "alreadyConnected": "已經連接",
+    "alreadyConnectedHint": "我們已經可以看到或聽到對方。",
+    "connectVideo": "連接到音頻/視頻",
+    "connectVideoHint": "在此處包含音頻和視頻",
+    "connectVideoMax": "（最多 2 名玩家）",
+    "privateRoom": "私人房間",
+    "privateRoomHint": "將鏈接發送給您的朋友",
+    "publicRoom": "公共房間",
+    "publicRoomHint": "與任何在線的人交談",
+    "roomCode": "使用房間代碼"
+  },
   "site": {
     "description": "通過遊戲與真人練習說話",
     "interfaceLanguagePrompt": "我說",

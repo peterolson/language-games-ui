@@ -11,20 +11,24 @@
 </script>
 
 <main>
-	<div class="videoContainer">
-		<div>
-			<StreamView tracks={userTracks} name={playerNames[selfId]} isSelfVideo {localParticipant} />
+	{#if localParticipant}
+		<div class="videoContainer">
+			<div>
+				<StreamView tracks={userTracks} name={playerNames[selfId]} isSelfVideo {localParticipant} />
+			</div>
+			<div>
+				{#each Object.keys(remoteTracks || {}) as id}
+					<StreamView tracks={remoteTracks[id]} name={playerNames[id]} />
+				{/each}
+			</div>
 		</div>
-		<div>
-			{#each Object.keys(remoteTracks || {}) as id}
-				<StreamView tracks={remoteTracks[id]} name={playerNames[id]} />
+	{:else}
+		<div class="p-2 border">
+			{#each Object.keys(playerNames) as id}
+				<div class:self-player={selfId === id}>{playerNames[id]}</div>
 			{/each}
 		</div>
-		<!--
-		
-		
-		-->
-	</div>
+	{/if}
 	<div class="gameContent">
 		<slot />
 	</div>
@@ -69,5 +73,9 @@
 			max-width: unset;
 			max-height: 45vh;
 		}
+	}
+
+	.self-player {
+		font-weight: bold;
 	}
 </style>

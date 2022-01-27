@@ -25,8 +25,11 @@
   "game": {
     "chat": "לְשׂוֹחֵחַ",
     "connecting": "מתחבר לשחקנים אחרים...",
+    "link": "קישור",
     "nameInput": "מה שמך?",
     "namePlaceholder": "ישראל ישראלי",
+    "roomFull": "החדר הזה כבר מלא.",
+    "roomNumber": "מספר חדר",
     "userReady": "אני מוכן",
     "waiting": "מחכה לשחקנים..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "תגיד משהו",
     "unmute": "בטל השתקה"
   },
+  "navigate": {
+    "back": "חזור",
+    "next": "הבא"
+  },
   "play": "לְשַׂחֵק",
+  "roomType": {
+    "alreadyConnected": "כבר מחובר",
+    "alreadyConnectedHint": "אנחנו כבר יכולים לראות או לשמוע אחד את השני.",
+    "connectVideo": "התחבר לאודיו / וידאו",
+    "connectVideoHint": "כלול כאן אודיו ווידאו",
+    "connectVideoMax": "(מקסימום 2 שחקנים)",
+    "privateRoom": "חדר פרטי",
+    "privateRoomHint": "שלח קישור לחברים שלך",
+    "publicRoom": "חדר ציבורי",
+    "publicRoomHint": "דבר עם כל מי שנמצא באינטרנט",
+    "roomCode": "השתמש בקוד החדר"
+  },
   "site": {
     "description": "תרגל דיבור דרך משחקים עם אנשים אמיתיים",
     "interfaceLanguagePrompt": "אני מדבר",

@@ -1,297 +1,140 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { getLanguageByCode, isRTL } from '../../data/languages';
-	import { _ } from 'svelte-i18n';
-	import { onDestroy } from 'svelte';
-	import { getSocket } from '../../data/socket';
-	import type { Socket } from 'socket.io-client';
+
+	import { locale, _ } from 'svelte-i18n';
+
+	import { Icon } from 'sveltestrap';
+	import type { RoomSettings } from './roomSettings.types';
+
+	import ChooseRoomType from './_chooseRoomType.svelte';
+	import EnterName from './_enterName.svelte';
 	import UserMedia from './_userMedia.svelte';
-	import StreamView from './streamView.svelte';
-	import { Spinner } from 'sveltestrap';
-	import { connectToPeers } from './connectPeers';
-	import type { Listener } from './connectPeers';
-	import PlayersView from './_playersView.svelte';
-	import Chat from './_chat.svelte';
-	import { games as gamesData } from '../../games';
-	import { locale } from 'svelte-i18n';
-	import type { LocalParticipant } from 'twilio-video';
-	import GameSelector from './simulate/_gameSelector.svelte';
+	import ConnectToRoom from './_connectToRoom.svelte';
+	import { getSocket } from '../../data/socket';
+	import RoomView from './_roomView.svelte';
 
 	const { lang } = $page.params;
 	const { code, name: languageName } = getLanguageByCode(lang);
-	const room = code.split('-')[0];
+	const langRoom = code.split('-')[0];
 
-	let selectingMedia = true;
-	let lookingForPlayers = false;
-	let connectingToPeers = false;
-	let isConnected = false;
-	let socket: Socket;
-	let userName: string;
-	let userTracks: MediaStreamTrack[];
-	let localParticipant: LocalParticipant;
-	let cleanup: () => void;
-	let addMessageListener: (listener: Listener) => void;
-	let removeMessageListener: (listener: Listener) => void;
-	let sendMessage: (message: unknown) => void;
-	let remoteTracks: Record<string, MediaStreamTrack[]>;
-	let playerNames: Record<string, string>;
-	let selfId: string;
-	let game: string;
-	let playerCount: number;
-	let unreadChatMessages: number = 0;
-	let selectedTab = 'chat';
-	let roomId: string;
-	let GameController;
-	let gameUniqueId = 0;
+	const query = $page.query;
+	const roomCode = query.get('room');
 
-	function lookForPlayers() {
-		lookingForPlayers = true;
-		getSocket((s) => {
-			socket = s;
-			socket.emit('playqueue.add', {
-				lang: room,
-				name: userName
-			});
-
-			socket.once('game-joined', onJoinGame);
-		});
-	}
-
-	function onDisconnected(id: string) {
-		playerCount--;
-		if (playerCount < 2) {
-			cleanup();
-			isConnected = false;
-			connectingToPeers = false;
-			lookForPlayers();
-		}
-	}
-
-	async function onJoinGame(args) {
-		lookingForPlayers = false;
-		connectingToPeers = true;
-		const { peerIds, room } = args;
-		playerNames = args.playerNames;
-		selfId = args.selfId;
-		game = args.game;
-		playerCount = args.playerCount;
-		unreadChatMessages = 0;
-		roomId = room;
-		({
-			remoteTracks,
-			cleanup,
-			addMessageListener,
-			removeMessageListener,
-			sendMessage,
-			localParticipant
-		} = await connectToPeers(
-			socket,
-			userTracks,
-			selfId,
-			peerIds,
-			playerNames,
-			room,
-			onAllConnected,
-			onDisconnected,
-			(tracks) => {
-				remoteTracks = tracks;
-			}
-		));
-		addMessageListener((_id: string, message: any) => {
-			if (message?.type === 'chat' && selectedTab !== 'chat') {
-				unreadChatMessages++;
-			}
-			if (message?.type === 'set-game') {
-				gameUniqueId = message.gameUniqueId;
-				setGame(message.key);
-			}
-		});
-	}
-
-	function onAllConnected() {
-		connectingToPeers = false;
-		isConnected = true;
-		const gameObject = gamesData.find((g) => g.key === game);
-		GameController = gameObject.Controller;
-	}
-
-	onDestroy(() => {
-		if (socket) {
-			socket.off('game-joined', onJoinGame);
-		}
-		if (cleanup) cleanup();
-		if (userTracks) {
-			userTracks.forEach((track) => track.stop());
-		}
-	});
-
-	function onSelectedMedia(tracks: MediaStreamTrack[], name: string) {
-		userName = name;
-		userTracks = tracks;
-		selectingMedia = false;
-		lookForPlayers();
-	}
-
-	const selectTab = (tab: string) => () => {
-		selectedTab = tab;
-		if (tab === 'chat') {
-			unreadChatMessages = 0;
-		}
+	let settings: Partial<RoomSettings> = {
+		roomCode,
+		isPublic: roomCode ? false : true,
+		useVideo: roomCode ? roomCode.startsWith('V') : true
 	};
 
-	function onChooseGame(newGame: string) {
-		gameUniqueId = +new Date();
-		sendMessage({
-			type: 'set-game',
-			key: newGame,
-			gameUniqueId
-		});
-		setGame(newGame);
+	let isRoomTypeSelected = !!roomCode;
+	let hasName = false;
+	let hasMedia = false;
+	let connectedToRoom = false;
+
+	function onSetSettings(updates: Partial<RoomSettings>) {
+		settings = { ...settings, ...updates };
+		connectedToRoom = settings?.room && settings?.peerIds?.length > 0;
 	}
 
-	function setGame(newGame: string) {
-		selectedTab = newGame === 'chat' ? 'chat' : 'game';
-		GameController = gamesData.find((g) => g.key === newGame).Controller;
-		game = newGame;
+	function back() {
+		if (!isRoomTypeSelected) {
+			goto('/');
+			return;
+		}
+		if (!hasName) {
+			isRoomTypeSelected = false;
+			return;
+		}
+		if (!hasMedia && settings.useVideo) {
+			hasName = false;
+			settings.tracks?.forEach((track) => track.stop());
+			delete settings.tracks;
+			settings = settings;
+			return;
+		}
+		if (!connectedToRoom) {
+			hasMedia = false;
+			if (!settings.useVideo) {
+				hasName = false;
+			}
+			getSocket((socket) => {
+				socket.emit('playqueue.remove');
+				socket.off('room-joined');
+				socket.off('player-joined');
+				socket.off('user:leave');
+			});
+			return;
+		}
+	}
+
+	function next() {
+		if (!isRoomTypeSelected) {
+			isRoomTypeSelected = true;
+			return;
+		}
+		if (!hasName) {
+			hasName = true;
+			return;
+		}
+		if (!hasMedia && settings.useVideo) {
+			hasMedia = true;
+			return;
+		}
 	}
 </script>
 
 <svelte:head>
-	<title>{languageName} - {$_('site.title')}</title>
+	<title>{$_('site.title')} - {languageName}</title>
 </svelte:head>
 
-<div class="page-container bg-white" class:rtl={isRTL($locale)}>
-	<div class="game">
-		{#if selectingMedia}
-			<UserMedia {onSelectedMedia} onSetTracks={(tracks) => (userTracks = tracks)} />
-		{:else if lookingForPlayers}
-			<div class="waiting">
-				<p>{$_('game.waiting')}</p>
-				<Spinner color="primary" />
-				<br />
-				<br />
-				<div class="videoPreview">
-					<StreamView tracks={userTracks} name={userName} isSelfVideo={true} />
-				</div>
-			</div>
-		{:else}
-			<PlayersView {remoteTracks} {playerNames} {selfId} {userTracks} {localParticipant}>
-				{#if connectingToPeers}
-					<div class="waiting">
-						<p>{$_('game.connecting')}</p>
-						<Spinner color="primary" />
-					</div>
-				{:else if isConnected}
-					<div class="gameTabs">
-						<ul class="nav nav-tabs">
-							{#if game !== 'chat'}
-								<li class="nav-item">
-									<button
-										class="nav-link"
-										class:active={selectedTab === 'game'}
-										on:click={selectTab('game')}
-									>
-										{$_(`${game}.name`)}
-									</button>
-								</li>
-							{/if}
-							<li class="nav-item">
-								<button
-									class="nav-link"
-									class:active={selectedTab === 'chat'}
-									on:click={selectTab('chat')}
-								>
-									{$_('chat.name')}
-									{#if unreadChatMessages > 0}
-										<span class="badge badge-primary">{unreadChatMessages}</span>
-									{/if}
-								</button>
-							</li>
-
-							<li class="nav-item">
-								<button
-									class="nav-link"
-									class:active={selectedTab === 'selectGame'}
-									on:click={selectTab('selectGame')}
-								>
-									{$_(`games`)}
-								</button>
-							</li>
-						</ul>
-						<div class="tabContent">
-							<div class:hidden={selectedTab !== 'chat'}>
-								<Chat {playerNames} {selfId} {addMessageListener} {sendMessage} />
-							</div>
-							<div class:hidden={selectedTab !== 'game'}>
-								{#key GameController}
-									<svelte:component
-										this={GameController}
-										room={roomId + gameUniqueId}
-										{playerNames}
-										{selfId}
-										{addMessageListener}
-										{removeMessageListener}
-										{sendMessage}
-									/>
-								{/key}
-							</div>
-							<div class:hidden={selectedTab !== 'selectGame'}>
-								<GameSelector {onChooseGame} />
-							</div>
-						</div>
-					</div>
-				{/if}
-			</PlayersView>
+<div class="wizard bg-white p-4" class:hidden={connectedToRoom} class:rtl={isRTL($locale)}>
+	<div class="h3">{languageName}</div>
+	{#if !isRoomTypeSelected}
+		<ChooseRoomType {onSetSettings} />
+	{:else if !hasName}
+		<EnterName {onSetSettings} />
+	{:else if !hasMedia && settings.useVideo}
+		<UserMedia {onSetSettings} {settings} />
+	{:else}
+		<ConnectToRoom {settings} {langRoom} {onSetSettings} {lang} />
+	{/if}
+	<div class="row mt-4">
+		<button class="btn btn-secondary col m-1" on:click={back}>
+			<Icon name={isRTL($locale) ? 'chevron-right' : 'chevron-left'} />
+			&nbsp;{$_('navigate.back')}
+		</button>
+		{#if settings.useVideo ? !hasMedia : !hasName}
+			<button
+				class="btn btn-primary col m-1"
+				on:click={next}
+				disabled={(isRoomTypeSelected && !settings.name) ||
+					(hasName && !settings.tracks && settings.useVideo)}
+			>
+				{$_('navigate.next')}&nbsp;
+				<Icon name={isRTL($locale) ? 'chevron-left' : 'chevron-right'} />
+			</button>
 		{/if}
 	</div>
 </div>
 
+{#if connectedToRoom}
+	<RoomView {settings} />
+{/if}
+
 <style>
-	.page-container {
-		display: grid;
-		grid-template-rows: minmax(0, 1fr);
-		height: 100%;
-		position: relative;
-	}
-	.nav {
-		margin-bottom: 8px;
+	.wizard {
+		max-width: 640px;
+		margin: auto;
+		border: 1px solid #ccc;
 	}
 
-	.waiting {
-		text-align: center;
-	}
-	.videoPreview {
-		height: calc(100vh - 200px);
-	}
-
-	.rtl {
-		direction: rtl;
-	}
-	.game {
-		flex-grow: 1;
-		height: 100%;
-	}
-
-	.gameTabs {
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-	}
-	.gameTabs div {
-		flex-grow: 1;
-		height: 100%;
-	}
 	.hidden {
 		display: none;
 	}
 
-	.badge {
-		background-color: var(--bs-primary);
-	}
-
-	.tabContent {
-		height: 100%;
-		overflow: auto;
-		flex-basis: 0;
+	.rtl {
+		direction: rtl;
 	}
 </style>

@@ -25,8 +25,11 @@
   "game": {
     "chat": "Discuter",
     "connecting": "Connexion à d'autres joueurs...",
+    "link": "Lien",
     "nameInput": "Quel est ton nom?",
     "namePlaceholder": "Jean Dupont",
+    "roomFull": "Cette salle est déjà pleine.",
+    "roomNumber": "Numéro de chambre",
     "userReady": "Je suis prêt",
     "waiting": "En attendant les joueurs..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "Dis quelquechose",
     "unmute": "Rétablir le son"
   },
+  "navigate": {
+    "back": "Retour",
+    "next": "Suivant"
+  },
   "play": "Jouer",
+  "roomType": {
+    "alreadyConnected": "Déjà connecté",
+    "alreadyConnectedHint": "On peut déjà se voir ou s'entendre.",
+    "connectVideo": "Connectez-vous à l'audio / vidéo",
+    "connectVideoHint": "Inclure l'audio et la vidéo ici",
+    "connectVideoMax": "(max 2 joueurs)",
+    "privateRoom": "Chambre privée",
+    "privateRoomHint": "Envoyez un lien à vos amis",
+    "publicRoom": "Salle publique",
+    "publicRoomHint": "Parlez à toute personne en ligne",
+    "roomCode": "Utiliser le code de la chambre"
+  },
   "site": {
     "description": "Entraînez-vous à parler à travers des jeux avec de vraies personnes",
     "interfaceLanguagePrompt": "Je parle",

@@ -25,8 +25,11 @@
   "game": {
     "chat": "Chat",
     "connecting": "Connecting to other players...",
+    "link": "Link",
     "nameInput": "What's your name?",
     "namePlaceholder": "John Smith",
+    "roomFull": "This room is already full.",
+    "roomNumber": "Room number",
     "userReady": "I'm ready",
     "waiting": "Waiting for players..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "Say something",
     "unmute": "Unmute"
   },
+  "navigate": {
+    "back": "Back",
+    "next": "Next"
+  },
   "play": "Play",
+  "roomType": {
+    "alreadyConnected": "Already connected",
+    "alreadyConnectedHint": "We can already see or hear each other.",
+    "connectVideo": "Connect to audio / video",
+    "connectVideoHint": "Include audio and video here",
+    "connectVideoMax": "(max 2 players)",
+    "privateRoom": "Private room",
+    "privateRoomHint": "Send a link to your friends",
+    "publicRoom": "Public room",
+    "publicRoomHint": "Talk to anyone who is online",
+    "roomCode": "Use room code"
+  },
   "site": {
     "description": "Practice speaking through games with real people",
     "interfaceLanguagePrompt": "I speak",

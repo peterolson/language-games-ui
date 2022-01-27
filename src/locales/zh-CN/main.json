@@ -25,8 +25,11 @@
   "game": {
     "chat": "聊天",
     "connecting": "连接到其他玩家...",
+    "link": "关联",
     "nameInput": "你叫什么名字？",
     "namePlaceholder": "王小明",
+    "roomFull": "这个房间已经满了。",
+    "roomNumber": "房间号",
     "userReady": "我准备好了",
     "waiting": "等待玩家..."
   },
@@ -61,7 +64,23 @@
     "testAudioRecording": "说些什么",
     "unmute": "取消静音"
   },
+  "navigate": {
+    "back": "后退",
+    "next": "下一步"
+  },
   "play": "玩",
+  "roomType": {
+    "alreadyConnected": "已经连接",
+    "alreadyConnectedHint": "我们已经可以看到或听到对方。",
+    "connectVideo": "连接到音频/视频",
+    "connectVideoHint": "在此处包含音频和视频",
+    "connectVideoMax": "（最多 2 名玩家）",
+    "privateRoom": "私人房间",
+    "privateRoomHint": "将链接发送给您的朋友",
+    "publicRoom": "公共房间",
+    "publicRoomHint": "与任何在线的人交谈",
+    "roomCode": "使用房间代码"
+  },
   "site": {
     "description": "通过游戏与真人练习说话",
     "interfaceLanguagePrompt": "我说",
