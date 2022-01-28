@@ -17,40 +17,31 @@
 	const random = new Random(room);
 	const playerIds = random.shuffle(Object.keys(playerNames).sort());
 
-	let drawerIndex = 0;
+	let describerIndex = 0;
 	let isDrawer: boolean;
 	let pictureIndex: number;
-	let translationValues: { values: Record<string, string> };
 
-	let strokes: StrokeData[] = [];
+	let strokes: Record<string, StrokeData[]> = {};
 	let pictureKey = 0;
 
 	let isRevealed = false;
 
 	$: {
-		const drawerId = playerIds[drawerIndex];
-		isDrawer = drawerId === selfId;
-		translationValues = {
-			values: {
-				0: playerNames[drawerId],
-				1: Object.keys(playerNames)
-					.filter((x) => x !== drawerId)
-					.map((x) => playerNames[x])
-					.join(', ')
-			}
-		};
+		const describerId = playerIds[describerIndex];
+		isDrawer = describerId !== selfId;
 	}
 
 	const messageHandlers = {
-		drawStroke: (_id, { stroke }) => {
-			strokes.push(stroke);
-			strokes = strokes;
+		drawStroke: (id, { stroke }) => {
+			strokes[id] = strokes[id] || [];
+			strokes[id].push(stroke);
+			strokes[id] = strokes[id];
 		},
-		removeStroke: (_id, { stroke }) => {
-			strokes = strokes.filter((x) => x.id !== stroke.id);
+		removeStroke: (id, { stroke }) => {
+			strokes[id] = (strokes[id] || []).filter((x) => x.id !== stroke.id);
 		},
-		clearStrokes: () => {
-			strokes = [];
+		clearStrokes: (id) => {
+			strokes[id] = [];
 		},
 		changePicture: () => {
 			pictureKey++;
@@ -62,8 +53,11 @@
 		},
 		next: (_id, args) => {
 			isRevealed = false;
-			drawerIndex = args.drawerIndex;
-			strokes = [];
+			describerIndex = args.describerIndex;
+			if (selfId === playerIds[describerIndex]) {
+				newPicture();
+			}
+			strokes = {};
 		}
 	};
 
@@ -112,7 +106,7 @@
 		sendMessage({
 			type: 'changePicture'
 		});
-		strokes = [];
+		strokes = {};
 	}
 
 	function revealPicture() {
@@ -125,22 +119,20 @@
 	}
 
 	function next() {
-		drawerIndex = (drawerIndex + 1) % playerIds.length;
+		describerIndex = (describerIndex + 1) % playerIds.length;
 		newPicture();
 		isRevealed = false;
-		strokes = [];
+		strokes = {};
 		sendMessage({
 			type: 'next',
-			drawerIndex
+			describerIndex
 		});
 	}
 </script>
 
 <div class="container">
 	{#if isRevealed}
-		{#if isDrawer}
-			<button class="btn btn-primary" on:click={next}>Next</button>
-		{/if}
+		<button class="btn btn-primary mb-2" on:click={next}>Next</button>
 		<div class="d-flex justify-content-around align-items-center flex-wrap">
 			<figure>
 				<img
@@ -151,10 +143,16 @@
 				/>
 				<figcaption>{$_('describe-picture.original')}</figcaption>
 			</figure>
-			<figure>
-				<Drawing {strokes} />
-				<figcaption>{$_('describe-picture.drawingBy', translationValues)}</figcaption>
-			</figure>
+			{#each playerIds as playerId}
+				{#if playerId !== playerIds[describerIndex]}
+					<figure>
+						<Drawing strokes={strokes[playerId] || []} />
+						<figcaption>
+							{$_('describe-picture.drawingBy', { values: { 0: playerNames[playerId] } })}
+						</figcaption>
+					</figure>
+				{/if}
+			{/each}
 		</div>
 	{:else if isDrawer}
 		<div class="drawpad">
@@ -169,7 +167,7 @@
 		<button
 			class="btn btn-primary m-2"
 			color="primary"
-			disabled={!strokes.length}
+			disabled={!Object.keys(strokes).length}
 			on:click={revealPicture}
 		>
 			{$_('describe-picture.done')}
@@ -188,7 +186,16 @@
 					</button>
 				</div>
 			{/if}
-			<Drawing {strokes} />
+			{#each playerIds as playerId}
+				{#if playerId !== playerIds[describerIndex]}
+					<figure>
+						<Drawing strokes={strokes[playerId] || []} />
+						<figcaption>
+							{$_('describe-picture.drawingBy', { values: { 0: playerNames[playerId] } })}
+						</figcaption>
+					</figure>
+				{/if}
+			{/each}
 		</div>
 	{/if}
 </div>

@@ -169,6 +169,7 @@
 	<div class="canvas">
 		<svg
 			viewBox={`0 0 ${WIDTH} ${WIDTH}`}
+			class="border"
 			xmlns="http://www.w3.org/2000/svg"
 			on:mousedown={mouseDown}
 			on:mousemove={mouseMove}
@@ -207,6 +208,5 @@
 		max-width: 100%;
 		max-height: 100%;
 		aspect-ratio: 1;
-		border: 1px solid black;
 	}
 </style>

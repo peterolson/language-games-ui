@@ -5,7 +5,7 @@
 	export let strokes: StrokeData[] = [];
 </script>
 
-<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" class="border">
 	{#each strokes as { stroke, type }}
 		<path
 			d={getPath(stroke)}
