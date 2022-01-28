@@ -11,9 +11,11 @@
 			? settings.roomCode.startsWith('V')
 				? 'absent'
 				: 'present'
-			: settings.useVideo
-			? 'absent'
-			: 'present';
+			: settings.useVideo === false
+			? 'present'
+			: settings.isPublic
+			? 'present'
+			: 'absent';
 	let roomCode = settings.roomCode || '';
 
 	$: {
