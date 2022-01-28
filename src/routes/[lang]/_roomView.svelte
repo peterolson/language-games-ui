@@ -55,10 +55,10 @@
 		console.log('all connected');
 	}
 
-	function onDisconnected({ id, playerIds }) {
+	function onDisconnected({ id, playerIds, twilioRoom }) {
 		console.log('disconnected', id, playerIds);
 		if (settings.onLeave) {
-			settings.onLeave({ id, playerIds });
+			settings.onLeave({ id, playerIds, twilioRoom });
 		}
 	}
 

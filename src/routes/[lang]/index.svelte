@@ -92,7 +92,7 @@
 <div class="wizard bg-white p-4" class:hidden={connectedToRoom} class:rtl={isRTL($locale)}>
 	<div class="h3">{languageName}</div>
 	{#if !isRoomTypeSelected}
-		<ChooseRoomType {onSetSettings} />
+		<ChooseRoomType {onSetSettings} {settings} />
 	{:else if !hasName}
 		<EnterName {onSetSettings} />
 	{:else if !hasMedia && settings.useVideo}

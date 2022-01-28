@@ -4,7 +4,8 @@ import type {
 	RemoteAudioTrack,
 	RemoteParticipant,
 	RemoteTrack,
-	RemoteVideoTrack
+	RemoteVideoTrack,
+	Room
 } from 'twilio-video';
 import { getAccesToken, getTwilioVideo } from '../twilio';
 
@@ -18,7 +19,7 @@ export async function connectToPeers(
 	useVideo: boolean,
 	room: string,
 	onAllConnected: () => void,
-	onDisconnected: (arg: { id: string; playerIds: string[] }) => void,
+	onDisconnected: (arg: { id: string; playerIds: string[]; twilioRoom: null | Room }) => void,
 	onTrackSubscribed: (remoteTracks: Record<string, MediaStreamTrack[]>) => void
 ): Promise<{
 	remoteTracks: Record<string, MediaStreamTrack[]>;
@@ -51,7 +52,7 @@ export async function connectToPeers(
 		});
 		twilioRoom.on('participantDisconnected', (participant) => {
 			console.log('Participant disconnected:', participant.identity);
-			onDisconnected(participant.identity);
+			onDisconnected({ id: participant.identity, playerIds: [...selfId, ...peerIds], twilioRoom });
 		});
 		twilioRoom.once('disconnected', function () {
 			console.log('You left the Room:', twilioRoom.name);
@@ -68,7 +69,7 @@ export async function connectToPeers(
 
 	socket.on('user:leave', (id) => {
 		console.log('User left:', id);
-		onDisconnected(id);
+		onDisconnected({ id, playerIds: [...selfId, ...peerIds], twilioRoom });
 	});
 
 	return {

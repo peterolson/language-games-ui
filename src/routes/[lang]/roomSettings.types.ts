@@ -1,4 +1,5 @@
 import type { Socket } from 'socket.io-client';
+import type { Room } from 'twilio-video';
 
 export type RoomSettings = {
 	isPublic: boolean;
@@ -11,5 +12,5 @@ export type RoomSettings = {
 	selfId: string;
 	socket: Socket;
 	roomCode: string;
-	onLeave: (args: { id: string; playerIds: string[] }) => void;
+	onLeave: (args: { id: string; playerIds: string[]; twilioRoom?: Room }) => void;
 };

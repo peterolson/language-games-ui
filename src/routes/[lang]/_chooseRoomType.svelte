@@ -3,10 +3,18 @@
 	import type { RoomSettings } from './roomSettings.types';
 
 	export let onSetSettings: (settings: Partial<RoomSettings>) => void;
+	export let settings: Partial<RoomSettings>;
 
-	let roomVisibility = 'public';
-	let videoConnection = 'present';
-	let roomCode = '';
+	let roomVisibility = settings.roomCode ? 'roomCode' : settings.isPublic ? 'public' : 'private';
+	let videoConnection =
+		roomVisibility === 'roomCode'
+			? settings.roomCode.startsWith('V')
+				? 'absent'
+				: 'present'
+			: settings.useVideo
+			? 'absent'
+			: 'present';
+	let roomCode = settings.roomCode || '';
 
 	$: {
 		const isPublic = roomVisibility === 'public';

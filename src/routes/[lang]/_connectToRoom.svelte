@@ -19,7 +19,6 @@
 
 	onMount(() => {
 		getSocket((socket) => {
-			console.log('connecting to room...');
 			onSetSettings({ socket });
 			socket.emit('playqueue.add', {
 				lang: langRoom,
@@ -29,12 +28,10 @@
 				room: settings.roomCode
 			});
 			socket.on('room-full', () => {
-				console.log('room full');
 				isRoomFull = true;
 			});
 			socket.on('room-joined', ({ peerIds, playerNames, room, selfId }) => {
 				isRoomFull = false;
-				console.log('room-joined', peerIds, playerNames, room, selfId);
 				onSetSettings({
 					peerIds: peerIds.filter((peerId) => peerId !== selfId),
 					playerNames,
@@ -43,7 +40,6 @@
 				});
 			});
 			socket.on('player-joined', ({ playerId, playerName }) => {
-				console.log('PLAYER JOINED!', playerId, playerName);
 				onSetSettings({
 					peerIds: [...settings.peerIds, playerId],
 					playerNames: {
@@ -53,8 +49,7 @@
 				});
 			});
 
-			function onLeave({ id, playerIds }) {
-				console.log('PLAYER LEFT!', id);
+			function onLeave({ id, playerIds, twilioRoom }) {
 				const peerIds = playerIds.filter((x) => x !== id && x !== settings.selfId);
 				onSetSettings({
 					peerIds,
@@ -63,15 +58,16 @@
 						[id]: undefined
 					}
 				});
-				console.log(peerIds, peerIds.length);
 				if (peerIds.length === 0) {
 					socket.emit('playqueue.remove');
+					twilioRoom?.disconnect();
 					setTimeout(() => {
 						socket.emit('playqueue.add', {
 							lang: langRoom,
 							name: settings.name,
 							isPublic: settings.isPublic,
-							room: settings.roomCode
+							room: settings.roomCode,
+							useVideo: settings.useVideo
 						});
 					}, 1000);
 				}
