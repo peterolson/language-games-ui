@@ -3,6 +3,16 @@
     "name": "לְשׂוֹחֵחַ",
     "send": "לִשְׁלוֹחַ"
   },
+  "codenames": {
+    "bombExploded": "הפצצה התפוצצה!",
+    "goodJob": "עבודה טובה!",
+    "guessesRemaining": "ניחושים שנותרו: {0}",
+    "name": "שמות קוד",
+    "nextRound": "סיבוב הבא",
+    "ohno": "אוי לא!",
+    "skipTurn": "אני לא יודע",
+    "statistics": "נמצאו {0} מילים ב-{1} סיבובים"
+  },
   "describe-picture": {
     "changePicture": "לשנות תמונה",
     "clear": "לנקות",

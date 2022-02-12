@@ -3,6 +3,16 @@
     "name": "Chat",
     "send": "Enviar"
   },
+  "codenames": {
+    "bombExploded": "¡La bomba explotó!",
+    "goodJob": "¡Buen trabajo!",
+    "guessesRemaining": "Adivinanzas restantes: {0}",
+    "name": "Nombres en clave",
+    "nextRound": "Proxima ronda",
+    "ohno": "¡Oh, no!",
+    "skipTurn": "No sé",
+    "statistics": "{0} palabras encontradas en {1} rondas"
+  },
   "describe-picture": {
     "changePicture": "Cambiar imagen",
     "clear": "Limpiar",

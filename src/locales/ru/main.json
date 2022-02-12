@@ -3,6 +3,16 @@
     "name": "Чат",
     "send": "Отправлять"
   },
+  "codenames": {
+    "bombExploded": "Бомба взорвалась!",
+    "goodJob": "Молодец!",
+    "guessesRemaining": "Осталось предположений: {0}",
+    "name": "Кодовые имена",
+    "nextRound": "Следующий раунд",
+    "ohno": "О, нет!",
+    "skipTurn": "Я не знаю",
+    "statistics": "{0} слов найдено в {1} раундах"
+  },
   "describe-picture": {
     "changePicture": "Изменить изображение",
     "clear": "Очистить",

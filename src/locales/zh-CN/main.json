@@ -3,6 +3,16 @@
     "name": "聊天",
     "send": "发送"
   },
+  "codenames": {
+    "bombExploded": "炸弹爆炸了！",
+    "goodJob": "做得好！",
+    "guessesRemaining": "剩余猜测数：{0}",
+    "name": "代号",
+    "nextRound": "下一轮",
+    "ohno": "不好了！",
+    "skipTurn": "我不知道",
+    "statistics": "在 {1} 轮中找到 {0} 个单词"
+  },
   "describe-picture": {
     "changePicture": "更换图片",
     "clear": "清除",

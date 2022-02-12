@@ -3,6 +3,16 @@
     "name": "Chat",
     "send": "Send"
   },
+  "codenames": {
+    "bombExploded": "The bomb exploded!",
+    "goodJob": "Good job!",
+    "guessesRemaining": "Guesses remaining: {0}",
+    "name": "Codenames",
+    "nextRound": "Next round",
+    "ohno": "Oh no!",
+    "skipTurn": "I don't know",
+    "statistics": "{0} words found in {1} rounds"
+  },
   "describe-picture": {
     "changePicture": "Change picture",
     "clear": "Clear",

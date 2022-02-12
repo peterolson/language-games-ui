@@ -3,6 +3,16 @@
     "name": "Discuter",
     "send": "Envoyer"
   },
+  "codenames": {
+    "bombExploded": "La bombe a explosé !",
+    "goodJob": "Bon travail!",
+    "guessesRemaining": "Suppositions restantes : {0}",
+    "name": "Noms de code",
+    "nextRound": "Tour suivant",
+    "ohno": "Oh non!",
+    "skipTurn": "Je ne sais pas",
+    "statistics": "{0} mots trouvés en {1} tours"
+  },
   "describe-picture": {
     "changePicture": "Changer l'image",
     "clear": "Nettoyer",
